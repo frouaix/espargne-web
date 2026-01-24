@@ -5,6 +5,7 @@ import { RothAccountForm } from './components/RothAccountForm';
 import { TraditionalAccountForm } from './components/TraditionalAccountForm';
 import { TaxableAccountForm } from './components/TaxableAccountForm';
 import { RealEstateAccountForm } from './components/RealEstateAccountForm';
+import { MortgageAccountForm } from './components/MortgageAccountForm';
 import { SSAIncomeForm, type SSAIncomeData } from './components/SSAIncomeForm';
 import { STORAGE_KEYS } from './utils/storage';
 import { createExportFile, type ExportData, type Account } from './utils/export';
@@ -40,6 +41,7 @@ function App(): ReactElement {
   const [showTraditionalForm, setShowTraditionalForm] = useState(false);
   const [showTaxableForm, setShowTaxableForm] = useState(false);
   const [showRealEstateForm, setShowRealEstateForm] = useState(false);
+  const [showMortgageForm, setShowMortgageForm] = useState(false);
   
   useEffect(() => {
     if (userProfile) {
@@ -153,6 +155,7 @@ function App(): ReactElement {
     if (accountType === 'traditional') setShowTraditionalForm(false);
     if (accountType === 'taxable') setShowTaxableForm(false);
     if (accountType === 'realEstate') setShowRealEstateForm(false);
+    if (accountType === 'mortgage') setShowMortgageForm(false);
   };
 
   const handleAccountRemove = (accountId: string): void => {
@@ -163,6 +166,7 @@ function App(): ReactElement {
   const traditionalAccounts = accounts.filter(acc => acc.accountType === 'traditional');
   const taxableAccounts = accounts.filter(acc => acc.accountType === 'taxable');
   const realEstateAccounts = accounts.filter(acc => acc.accountType === 'realEstate');
+  const mortgageAccounts = accounts.filter(acc => acc.accountType === 'mortgage');
 
   return (
     <div className="app-container">
@@ -335,6 +339,40 @@ function App(): ReactElement {
         })()}
       </section>
 
+      <section className="section">
+        <h2>Liabilities</h2>
+        
+        <div className="accounts-group">
+          <h3>Mortgages ({mortgageAccounts.length})</h3>
+          <div className="accounts-grid">
+            {mortgageAccounts.map((acc) => {
+              if (acc.accountType !== 'mortgage') return null;
+              const { accountId, propertyNickname, principalBalance, interestRate, monthlyPayment } = acc;
+              return (
+                <div key={accountId} className="account-card account-card-mortgage">
+                  <div className="account-card-content">
+                    <div className="account-card-balance">${principalBalance.toLocaleString()}</div>
+                    <div className="account-card-details">
+                      {propertyNickname && <div><strong>{propertyNickname}</strong></div>}
+                      <div>Rate: {interestRate}% APR</div>
+                      <div>Payment: ${monthlyPayment.toLocaleString()}/month</div>
+                    </div>
+                  </div>
+                  <div className="account-card-actions">
+                    <button onClick={() => handleAccountRemove(accountId)} className="btn-remove">Remove</button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {showMortgageForm ? (
+            <MortgageAccountForm onSave={handleAccountSave} />
+          ) : (
+            <button onClick={() => setShowMortgageForm(true)} className="btn btn-liability">+ Add Mortgage</button>
+          )}
+        </div>
+      </section>
+
       <section>
         <h2>Portfolio Summary</h2>
         <div className="summary-container">
@@ -355,14 +393,44 @@ function App(): ReactElement {
                 return sum;
               }, 0).toLocaleString()}
           </div>
+          <div className="summary-item">
+            <strong>Total Liabilities:</strong> ${mortgageAccounts
+              .reduce((sum, acc) => {
+                if (acc.accountType === 'mortgage') {
+                  return sum + acc.principalBalance;
+                }
+                return sum;
+              }, 0).toLocaleString()}
+          </div>
           <div className="summary-total">
-            <strong>Total Portfolio:</strong> ${accounts
+            <strong>Total Assets:</strong> ${accounts
+              .filter(acc => acc.accountType !== 'mortgage')
               .reduce((sum, acc) => {
                 if (acc.accountType === 'realEstate') {
                   return sum + acc.currentValue;
                 }
                 return sum + acc.balance;
               }, 0).toLocaleString()}
+          </div>
+          <div className="summary-total">
+            <strong>Net Worth:</strong> ${(() => {
+              const totalAssets = accounts
+                .filter(acc => acc.accountType !== 'mortgage')
+                .reduce((sum, acc) => {
+                  if (acc.accountType === 'realEstate') {
+                    return sum + acc.currentValue;
+                  }
+                  return sum + acc.balance;
+                }, 0);
+              const totalLiabilities = mortgageAccounts
+                .reduce((sum, acc) => {
+                  if (acc.accountType === 'mortgage') {
+                    return sum + acc.principalBalance;
+                  }
+                  return sum;
+                }, 0);
+              return (totalAssets - totalLiabilities).toLocaleString();
+            })()}
           </div>
         </div>
       </section>

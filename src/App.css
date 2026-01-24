@@ -106,6 +106,14 @@
   background: var(--color-quaternary-hover);
 }
 
+.btn-liability {
+  background: var(--color-liability);
+}
+
+.btn-liability:hover {
+  background: var(--color-liability-hover);
+}
+
 .btn-remove {
   background: var(--color-danger);
   color: white;
@@ -269,6 +277,10 @@
 
 .account-card-realEstate {
   border-left: 4px solid var(--color-quaternary);
+}
+
+.account-card-mortgage {
+  border-left: 4px solid var(--color-liability);
 }
 
 .account-card-taxable {
