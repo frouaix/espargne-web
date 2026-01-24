@@ -2,9 +2,10 @@ import type { UserProfileData } from '../components/UserProfileForm';
 import type { RothAccountData } from '../components/RothAccountForm';
 import type { TraditionalAccountData } from '../components/TraditionalAccountForm';
 import type { TaxableAccountData } from '../components/TaxableAccountForm';
+import type { RealEstateAccountData } from '../components/RealEstateAccountForm';
 import type { SSAIncomeData } from '../components/SSAIncomeForm';
 
-export type Account = RothAccountData | TraditionalAccountData | TaxableAccountData;
+export type Account = RothAccountData | TraditionalAccountData | TaxableAccountData | RealEstateAccountData;
 
 export interface ExportData {
   version: string,

@@ -98,6 +98,14 @@
   background: var(--color-tertiary-hover);
 }
 
+.btn-quaternary {
+  background: var(--color-quaternary);
+}
+
+.btn-quaternary:hover {
+  background: var(--color-quaternary-hover);
+}
+
 .btn-remove {
   background: var(--color-danger);
   color: white;
@@ -216,7 +224,14 @@
   background: var(--color-card);
   min-height: 120px;
 }
--content {
+
+.account-card:hover {
+  background: var(--color-card-hover);
+  box-shadow: 0 4px 12px var(--color-shadow);
+  transform: translateY(-2px);
+}
+
+.account-card-content {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -237,9 +252,7 @@
 .account-card-actions {
   display: flex;
   justify-content: flex-end;
-  margin-top: auto--color-card-hover);
-  box-shadow: 0 4px 12px var(--color-shadow);
-  transform: translateY(-2px);
+  margin-top: auto;
 }
 
 .account-card-roth {
@@ -248,6 +261,14 @@
 
 .account-card-traditional {
   border-left: 4px solid var(--color-secondary);
+}
+
+.account-card-taxable {
+  border-left: 4px solid var(--color-tertiary);
+}
+
+.account-card-realEstate {
+  border-left: 4px solid var(--color-quaternary);
 }
 
 .account-card-taxable {

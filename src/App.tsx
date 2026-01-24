@@ -4,6 +4,7 @@ import { UserProfileForm, type UserProfileData } from './components/UserProfileF
 import { RothAccountForm } from './components/RothAccountForm';
 import { TraditionalAccountForm } from './components/TraditionalAccountForm';
 import { TaxableAccountForm } from './components/TaxableAccountForm';
+import { RealEstateAccountForm } from './components/RealEstateAccountForm';
 import { SSAIncomeForm, type SSAIncomeData } from './components/SSAIncomeForm';
 import { STORAGE_KEYS } from './utils/storage';
 import { createExportFile, type ExportData, type Account } from './utils/export';
@@ -38,6 +39,7 @@ function App(): ReactElement {
   const [showRothForm, setShowRothForm] = useState(false);
   const [showTraditionalForm, setShowTraditionalForm] = useState(false);
   const [showTaxableForm, setShowTaxableForm] = useState(false);
+  const [showRealEstateForm, setShowRealEstateForm] = useState(false);
   
   useEffect(() => {
     if (userProfile) {
@@ -150,6 +152,7 @@ function App(): ReactElement {
     if (accountType === 'roth') setShowRothForm(false);
     if (accountType === 'traditional') setShowTraditionalForm(false);
     if (accountType === 'taxable') setShowTaxableForm(false);
+    if (accountType === 'realEstate') setShowRealEstateForm(false);
   };
 
   const handleAccountRemove = (accountId: string): void => {
@@ -159,6 +162,7 @@ function App(): ReactElement {
   const rothAccounts = accounts.filter(acc => acc.accountType === 'roth');
   const traditionalAccounts = accounts.filter(acc => acc.accountType === 'traditional');
   const taxableAccounts = accounts.filter(acc => acc.accountType === 'taxable');
+  const realEstateAccounts = accounts.filter(acc => acc.accountType === 'realEstate');
 
   return (
     <div className="app-container">
@@ -285,6 +289,36 @@ function App(): ReactElement {
             <button onClick={() => setShowTaxableForm(true)} className="btn btn-tertiary">+ Add Taxable Account</button>
           )}
         </div>
+
+        <div className="accounts-group">
+          <h3>Real Estate ({realEstateAccounts.length})</h3>
+          <div className="accounts-grid">
+            {realEstateAccounts.map((acc) => {
+              if (acc.accountType !== 'realEstate') return null;
+              const { accountId, nickname, currentValue, yearlyValueIncrease } = acc;
+              return (
+                <div key={accountId} className="account-card account-card-realEstate">
+                  <div className="account-card-content">
+                    <div className="account-card-balance">${currentValue.toLocaleString()}</div>
+                    <div className="account-card-details">
+                      {nickname}
+                      <br />
+                      Growth: {yearlyValueIncrease}% /year
+                    </div>
+                  </div>
+                  <div className="account-card-actions">
+                    <button onClick={() => handleAccountRemove(accountId)} className="btn-remove">Remove</button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {showRealEstateForm ? (
+            <RealEstateAccountForm onSave={handleAccountSave} />
+          ) : (
+            <button onClick={() => setShowRealEstateForm(true)} className="btn btn-quaternary">+ Add Real Estate</button>
+          )}
+        </div>
       </section>
 
       <section className="section">
@@ -312,9 +346,23 @@ function App(): ReactElement {
             <strong>Total Taxable Accounts:</strong> ${taxableAccounts
               .reduce((sum, acc) => sum + acc.balance, 0).toLocaleString()}
           </div>
+          <div className="summary-item">
+            <strong>Total Real Estate:</strong> ${realEstateAccounts
+              .reduce((sum, acc) => {
+                if (acc.accountType === 'realEstate') {
+                  return sum + acc.currentValue;
+                }
+                return sum;
+              }, 0).toLocaleString()}
+          </div>
           <div className="summary-total">
             <strong>Total Portfolio:</strong> ${accounts
-              .reduce((sum, acc) => sum + acc.balance, 0).toLocaleString()}
+              .reduce((sum, acc) => {
+                if (acc.accountType === 'realEstate') {
+                  return sum + acc.currentValue;
+                }
+                return sum + acc.balance;
+              }, 0).toLocaleString()}
           </div>
         </div>
       </section>
