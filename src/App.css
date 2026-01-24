@@ -172,6 +172,56 @@
   border-bottom: 2px solid var(--color-border);
 }
 
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--color-border);
+}
+
+.section-header:hover h2 {
+  color: var(--color-primary);
+}
+
+.section-header h2 {
+  margin: 0;
+  padding: 0;
+  border: none;
+  transition: color 0.2s ease;
+}
+
+.section-toggle {
+  font-size: 1.5rem;
+  color: var(--color-text);
+  transition: transform 0.3s ease;
+  font-weight: bold;
+}
+
+.section-toggle.collapsed {
+  transform: rotate(-90deg);
+}
+
+.section-summary {
+  padding: 0.75rem 0;
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.section-content {
+  max-height: 10000px;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.section-content.collapsed {
+  max-height: 0;
+}
+
 .info-display {
   margin-top: 1rem;
   padding: 1rem;
@@ -233,10 +283,51 @@
   min-height: 120px;
 }
 
+.account-card.collapsed {
+  min-height: auto;
+}
+
 .account-card:hover {
   background: var(--color-card-hover);
   box-shadow: 0 4px 12px var(--color-shadow);
   transform: translateY(-2px);
+}
+
+.account-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.account-card-summary {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.account-card-toggle {
+  font-size: 1.2rem;
+  color: var(--color-text);
+  transition: transform 0.3s ease;
+  font-weight: bold;
+  margin-left: 0.5rem;
+}
+
+.account-card-toggle.collapsed {
+  transform: rotate(-90deg);
+}
+
+.account-card-details-wrapper {
+  max-height: 1000px;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.account-card-details-wrapper.collapsed {
+  max-height: 0;
 }
 
 .account-card-content {
@@ -255,6 +346,16 @@
 .account-card-details {
   font-size: 0.875rem;
   color: var(--color-text-secondary);
+}
+
+.account-card-type-label {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  margin-left: 0.5rem;
+}
+
+.account-card-details-line {
+  line-height: 1.5;
 }
 
 .account-card-actions {

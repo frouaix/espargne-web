@@ -43,6 +43,9 @@ function App(): ReactElement {
   const [showRealEstateForm, setShowRealEstateForm] = useState(false);
   const [showMortgageForm, setShowMortgageForm] = useState(false);
   
+  const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
+  const [collapsedCards, setCollapsedCards] = useState<Record<string, boolean>>({});
+  
   useEffect(() => {
     if (userProfile) {
       localStorage.setItem(USER_PROFILE, JSON.stringify(userProfile));
@@ -168,6 +171,20 @@ function App(): ReactElement {
   const realEstateAccounts = accounts.filter(acc => acc.accountType === 'realEstate');
   const mortgageAccounts = accounts.filter(acc => acc.accountType === 'mortgage');
 
+  const toggleSection = (sectionId: string): void => {
+    setCollapsedSections(prev => ({
+      ...prev,
+      [sectionId]: !prev[sectionId],
+    }));
+  };
+
+  const toggleCard = (cardId: string): void => {
+    setCollapsedCards(prev => ({
+      ...prev,
+      [cardId]: !prev[cardId],
+    }));
+  };
+
   return (
     <div className="app-container">
       <div className="header">
@@ -204,37 +221,66 @@ function App(): ReactElement {
       )}
       
       <section className="section">
-        <h2>User Profile</h2>
-        <UserProfileForm onSave={handleProfileSave} />
-        {userProfile && (() => {
-          const { birthYear, filingStatus, retirementAge } = userProfile;
-          return (
-            <div className="info-display profile-display">
-              <strong>Current Profile:</strong> Born {birthYear}, 
-              Filing Status: {filingStatus}, 
-              Retirement Age: {retirementAge}
-            </div>
-          );
-        })()}
+        <div className="section-header" onClick={() => toggleSection('profile')}>
+          <h2>User Profile</h2>
+          <span className={`section-toggle ${collapsedSections['profile'] ? 'collapsed' : ''}`}>▼</span>
+        </div>
+        {collapsedSections['profile'] && userProfile && (
+          <div className="section-summary">
+            Born {userProfile.birthYear}, {userProfile.filingStatus}, Retirement at {userProfile.retirementAge}
+          </div>
+        )}
+        <div className={`section-content ${collapsedSections['profile'] ? 'collapsed' : ''}`}>
+          <UserProfileForm onSave={handleProfileSave} />
+          {userProfile && (() => {
+            const { birthYear, filingStatus, retirementAge } = userProfile;
+            return (
+              <div className="info-display profile-display">
+                <strong>Current Profile:</strong> Born {birthYear}, 
+                Filing Status: {filingStatus}, 
+                Retirement Age: {retirementAge}
+              </div>
+            );
+          })()}
+        </div>
       </section>
 
       <section className="section">
-        <h2>Retirement Accounts</h2>
-        
+        <div className="section-header" onClick={() => toggleSection('retirement')}>
+          <h2>Retirement Accounts</h2>
+          <span className={`section-toggle ${collapsedSections['retirement'] ? 'collapsed' : ''}`}>▼</span>
+        </div>
+        {collapsedSections['retirement'] && (
+          <div className="section-summary">
+            {rothAccounts.length} Roth account(s): ${rothAccounts.reduce((sum, acc) => sum + acc.balance, 0).toLocaleString()} • {traditionalAccounts.length} Traditional account(s): ${traditionalAccounts.reduce((sum, acc) => sum + acc.balance, 0).toLocaleString()}
+          </div>
+        )}
+        <div className={`section-content ${collapsedSections['retirement'] ? 'collapsed' : ''}`}>
         <div className="accounts-group">
           <h3>Roth IRA / 401(k) ({rothAccounts.length})</h3>
           <div className="accounts-grid">
-            {rothAccounts.map(({ accountId, balance }) => (
-              <div key={accountId} className="account-card account-card-roth">
-                <div className="account-card-content">
-                  <div className="account-card-balance">${balance.toLocaleString()}</div>
-                  <div className="account-card-details">Roth Account</div>
+            {rothAccounts.map(({ accountId, balance }) => {
+              const isCollapsed = collapsedCards[accountId];
+              return (
+                <div key={accountId} className={`account-card account-card-roth ${isCollapsed ? 'collapsed' : ''}`}>
+                  <div className="account-card-header" onClick={() => toggleCard(accountId)}>
+                    <div className="account-card-summary">
+                      <div className="account-card-balance">${balance.toLocaleString()}</div>
+                      {isCollapsed && <span className="account-card-type-label">Roth</span>}
+                    </div>
+                    <span className={`account-card-toggle ${isCollapsed ? 'collapsed' : ''}`}>▼</span>
+                  </div>
+                  <div className={`account-card-details-wrapper ${isCollapsed ? 'collapsed' : ''}`}>
+                    <div className="account-card-content">
+                      <div className="account-card-details">Roth Account</div>
+                    </div>
+                    <div className="account-card-actions">
+                      <button onClick={(e) => { e.stopPropagation(); handleAccountRemove(accountId); }} className="btn-remove">Remove</button>
+                    </div>
+                  </div>
                 </div>
-                <div className="account-card-actions">
-                  <button onClick={() => handleAccountRemove(accountId)} className="btn-remove">Remove</button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
           {showRothForm ? (
             <RothAccountForm onSave={handleAccountSave} />
@@ -246,17 +292,28 @@ function App(): ReactElement {
         <div className="accounts-group">
           <h3>Traditional IRA / 401(k) ({traditionalAccounts.length})</h3>
           <div className="accounts-grid">
-            {traditionalAccounts.map(({ accountId, balance }) => (
-              <div key={accountId} className="account-card account-card-traditional">
-                <div className="account-card-content">
-                  <div className="account-card-balance">${balance.toLocaleString()}</div>
-                  <div className="account-card-details">Traditional Account</div>
+            {traditionalAccounts.map(({ accountId, balance }) => {
+              const isCollapsed = collapsedCards[accountId];
+              return (
+                <div key={accountId} className={`account-card account-card-traditional ${isCollapsed ? 'collapsed' : ''}`}>
+                  <div className="account-card-header" onClick={() => toggleCard(accountId)}>
+                    <div className="account-card-summary">
+                      <div className="account-card-balance">${balance.toLocaleString()}</div>
+                      {isCollapsed && <span className="account-card-type-label">Traditional</span>}
+                    </div>
+                    <span className={`account-card-toggle ${isCollapsed ? 'collapsed' : ''}`}>▼</span>
+                  </div>
+                  <div className={`account-card-details-wrapper ${isCollapsed ? 'collapsed' : ''}`}>
+                    <div className="account-card-content">
+                      <div className="account-card-details">Traditional Account</div>
+                    </div>
+                    <div className="account-card-actions">
+                      <button onClick={(e) => { e.stopPropagation(); handleAccountRemove(accountId); }} className="btn-remove">Remove</button>
+                    </div>
+                  </div>
                 </div>
-                <div className="account-card-actions">
-                  <button onClick={() => handleAccountRemove(accountId)} className="btn-remove">Remove</button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
           {showTraditionalForm ? (
             <TraditionalAccountForm onSave={handleAccountSave} />
@@ -264,28 +321,50 @@ function App(): ReactElement {
             <button onClick={() => setShowTraditionalForm(true)} className="btn btn-secondary">+ Add Traditional Account</button>
           )}
         </div>
+        </div>
       </section>
 
       <section className="section">
-        <h2>Taxable Accounts</h2>
+        <div className="section-header" onClick={() => toggleSection('taxable')}>
+          <h2>Taxable Accounts</h2>
+          <span className={`section-toggle ${collapsedSections['taxable'] ? 'collapsed' : ''}`}>▼</span>
+        </div>
+        {collapsedSections['taxable'] && (
+          <div className="section-summary">
+            {taxableAccounts.length} Taxable account(s): ${taxableAccounts.reduce((sum, acc) => sum + acc.balance, 0).toLocaleString()} • {realEstateAccounts.length} Real Estate: ${realEstateAccounts.reduce((sum, acc) => acc.accountType === 'realEstate' ? sum + acc.currentValue : sum, 0).toLocaleString()}
+          </div>
+        )}
+        <div className={`section-content ${collapsedSections['taxable'] ? 'collapsed' : ''}`}>
         <div className="accounts-group">
           <h3>Brokerage Accounts ({taxableAccounts.length})</h3>
           <div className="accounts-grid">
-            {taxableAccounts.map(({ accountId, balance, costBasis }) => (
-              <div key={accountId} className="account-card account-card-taxable">
-                <div className="account-card-content">
-                  <div className="account-card-balance">${balance.toLocaleString()}</div>
-                  <div className="account-card-details">
-                    Cost Basis: ${costBasis.toLocaleString()}
-                    <br />
-                    Gains: ${(balance - costBasis).toLocaleString()}
+            {taxableAccounts.map(({ accountId, balance, costBasis }) => {
+              const isCollapsed = collapsedCards[accountId];
+              const gains = balance - costBasis;
+              return (
+                <div key={accountId} className={`account-card account-card-taxable ${isCollapsed ? 'collapsed' : ''}`}>
+                  <div className="account-card-header" onClick={() => toggleCard(accountId)}>
+                    <div className="account-card-summary">
+                      <div className="account-card-balance">${balance.toLocaleString()}</div>
+                      {isCollapsed && <span className="account-card-type-label">Gains: ${gains.toLocaleString()}</span>}
+                    </div>
+                    <span className={`account-card-toggle ${isCollapsed ? 'collapsed' : ''}`}>▼</span>
+                  </div>
+                  <div className={`account-card-details-wrapper ${isCollapsed ? 'collapsed' : ''}`}>
+                    <div className="account-card-content">
+                      <div className="account-card-details">
+                        Cost Basis: ${costBasis.toLocaleString()}
+                        <br />
+                        Gains: ${gains.toLocaleString()}
+                      </div>
+                    </div>
+                    <div className="account-card-actions">
+                      <button onClick={(e) => { e.stopPropagation(); handleAccountRemove(accountId); }} className="btn-remove">Remove</button>
+                    </div>
                   </div>
                 </div>
-                <div className="account-card-actions">
-                  <button onClick={() => handleAccountRemove(accountId)} className="btn-remove">Remove</button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
           {showTaxableForm ? (
             <TaxableAccountForm onSave={handleAccountSave} />
@@ -300,18 +379,27 @@ function App(): ReactElement {
             {realEstateAccounts.map((acc) => {
               if (acc.accountType !== 'realEstate') return null;
               const { accountId, nickname, currentValue, yearlyValueIncrease } = acc;
+              const isCollapsed = collapsedCards[accountId];
               return (
-                <div key={accountId} className="account-card account-card-realEstate">
-                  <div className="account-card-content">
-                    <div className="account-card-balance">${currentValue.toLocaleString()}</div>
-                    <div className="account-card-details">
-                      {nickname}
-                      <br />
-                      Growth: {yearlyValueIncrease}% /year
+                <div key={accountId} className={`account-card account-card-realEstate ${isCollapsed ? 'collapsed' : ''}`}>
+                  <div className="account-card-header" onClick={() => toggleCard(accountId)}>
+                    <div className="account-card-summary">
+                      <div className="account-card-balance">${currentValue.toLocaleString()}</div>
+                      {isCollapsed && <span className="account-card-type-label">{nickname}</span>}
                     </div>
+                    <span className={`account-card-toggle ${isCollapsed ? 'collapsed' : ''}`}>▼</span>
                   </div>
-                  <div className="account-card-actions">
-                    <button onClick={() => handleAccountRemove(accountId)} className="btn-remove">Remove</button>
+                  <div className={`account-card-details-wrapper ${isCollapsed ? 'collapsed' : ''}`}>
+                    <div className="account-card-content">
+                      <div className="account-card-details">
+                        {nickname}
+                        <br />
+                        Growth: {yearlyValueIncrease}% /year
+                      </div>
+                    </div>
+                    <div className="account-card-actions">
+                      <button onClick={(e) => { e.stopPropagation(); handleAccountRemove(accountId); }} className="btn-remove">Remove</button>
+                    </div>
                   </div>
                 </div>
               );
@@ -323,10 +411,20 @@ function App(): ReactElement {
             <button onClick={() => setShowRealEstateForm(true)} className="btn btn-quaternary">+ Add Real Estate</button>
           )}
         </div>
+        </div>
       </section>
 
       <section className="section">
-        <h2>Social Security</h2>
+        <div className="section-header" onClick={() => toggleSection('ssa')}>
+          <h2>Social Security</h2>
+          <span className={`section-toggle ${collapsedSections['ssa'] ? 'collapsed' : ''}`}>▼</span>
+        </div>
+        {collapsedSections['ssa'] && ssaIncome && (
+          <div className="section-summary">
+            ${ssaIncome.fraMonthlyBenefit.toLocaleString()}/month at FRA, claiming at age {ssaIncome.claimingAge}
+          </div>
+        )}
+        <div className={`section-content ${collapsedSections['ssa'] ? 'collapsed' : ''}`}>
         <SSAIncomeForm onSave={handleSSAIncomeSave(setSsaIncome)} />
         {ssaIncome && (() => {
           const { fraMonthlyBenefit, claimingAge } = ssaIncome;
@@ -337,29 +435,47 @@ function App(): ReactElement {
             </div>
           );
         })()}
+        </div>
       </section>
 
       <section className="section">
-        <h2>Liabilities</h2>
-        
+        <div className="section-header" onClick={() => toggleSection('liabilities')}>
+          <h2>Liabilities</h2>
+          <span className={`section-toggle ${collapsedSections['liabilities'] ? 'collapsed' : ''}`}>▼</span>
+        </div>
+        {collapsedSections['liabilities'] && (
+          <div className="section-summary">
+            {mortgageAccounts.length} Mortgage(s): ${mortgageAccounts.reduce((sum, acc) => acc.accountType === 'mortgage' ? sum + acc.principalBalance : sum, 0).toLocaleString()}
+          </div>
+        )}
+        <div className={`section-content ${collapsedSections['liabilities'] ? 'collapsed' : ''}`}>
         <div className="accounts-group">
           <h3>Mortgages ({mortgageAccounts.length})</h3>
           <div className="accounts-grid">
             {mortgageAccounts.map((acc) => {
               if (acc.accountType !== 'mortgage') return null;
               const { accountId, propertyNickname, principalBalance, interestRate, monthlyPayment } = acc;
+              const isCollapsed = collapsedCards[accountId];
               return (
-                <div key={accountId} className="account-card account-card-mortgage">
-                  <div className="account-card-content">
-                    <div className="account-card-balance">${principalBalance.toLocaleString()}</div>
-                    <div className="account-card-details">
-                      {propertyNickname && <div><strong>{propertyNickname}</strong></div>}
-                      <div>Rate: {interestRate}% APR</div>
-                      <div>Payment: ${monthlyPayment.toLocaleString()}/month</div>
+                <div key={accountId} className={`account-card account-card-mortgage ${isCollapsed ? 'collapsed' : ''}`}>
+                  <div className="account-card-header" onClick={() => toggleCard(accountId)}>
+                    <div className="account-card-summary">
+                      <div className="account-card-balance">${principalBalance.toLocaleString()}</div>
+                      {isCollapsed && <span className="account-card-type-label">{propertyNickname}</span>}
                     </div>
+                    <span className={`account-card-toggle ${isCollapsed ? 'collapsed' : ''}`}>▼</span>
                   </div>
-                  <div className="account-card-actions">
-                    <button onClick={() => handleAccountRemove(accountId)} className="btn-remove">Remove</button>
+                  <div className={`account-card-details-wrapper ${isCollapsed ? 'collapsed' : ''}`}>
+                    <div className="account-card-content">
+                      <div className="account-card-details">
+                        {propertyNickname && <div><strong>{propertyNickname}</strong></div>}
+                        <div>Rate: {interestRate}% APR</div>
+                        <div>Payment: ${monthlyPayment.toLocaleString()}/month</div>
+                      </div>
+                    </div>
+                    <div className="account-card-actions">
+                      <button onClick={(e) => { e.stopPropagation(); handleAccountRemove(accountId); }} className="btn-remove">Remove</button>
+                    </div>
                   </div>
                 </div>
               );
@@ -371,10 +487,37 @@ function App(): ReactElement {
             <button onClick={() => setShowMortgageForm(true)} className="btn btn-liability">+ Add Mortgage</button>
           )}
         </div>
+        </div>
       </section>
 
-      <section>
-        <h2>Portfolio Summary</h2>
+      <section className="section">
+        <div className="section-header" onClick={() => toggleSection('summary')}>
+          <h2>Portfolio Summary</h2>
+          <span className={`section-toggle ${collapsedSections['summary'] ? 'collapsed' : ''}`}>▼</span>
+        </div>
+        {collapsedSections['summary'] && (() => {
+          const totalAssets = accounts
+            .filter(acc => acc.accountType !== 'mortgage')
+            .reduce((sum, acc) => {
+              if (acc.accountType === 'realEstate') {
+                return sum + acc.currentValue;
+              }
+              return sum + acc.balance;
+            }, 0);
+          const totalLiabilities = mortgageAccounts
+            .reduce((sum, acc) => {
+              if (acc.accountType === 'mortgage') {
+                return sum + acc.principalBalance;
+              }
+              return sum;
+            }, 0);
+          return (
+            <div className="section-summary">
+              Assets: ${totalAssets.toLocaleString()} • Liabilities: ${totalLiabilities.toLocaleString()} • Net Worth: ${(totalAssets - totalLiabilities).toLocaleString()}
+            </div>
+          );
+        })()}
+        <div className={`section-content ${collapsedSections['summary'] ? 'collapsed' : ''}`}>
         <div className="summary-container">
           <div className="summary-item">
             <strong>Total Retirement Accounts:</strong> ${[...rothAccounts, ...traditionalAccounts]
@@ -432,6 +575,7 @@ function App(): ReactElement {
               return (totalAssets - totalLiabilities).toLocaleString();
             })()}
           </div>
+        </div>
         </div>
       </section>
     </div>
