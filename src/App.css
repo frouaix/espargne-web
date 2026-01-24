@@ -1,65 +1,118 @@
 .app-container {
-  padding: 20px;
-  max-width: 900px;
+  padding: 2rem;
+  max-width: 1200px;
   margin: 0 auto;
+  background-color: var(--color-background);
+  min-height: 100vh;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--color-border);
 }
 
 .header h1 {
-  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text);
 }
 
 .header-actions {
   display: flex;
-  gap: 10px;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .btn {
-  padding: 8px 16px;
+  padding: 0.625rem 1.25rem;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px var(--color-shadow);
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px var(--color-shadow-hover);
+}
+
+.btn:active {
+  transform: translateY(0);
 }
 
 .btn-export {
-  background: #4CAF50;
+  background: var(--color-primary);
+}
+
+.btn-export:hover {
+  background: var(--color-primary-hover);
 }
 
 .btn-import {
-  background: #2196F3;
+  background: var(--color-tertiary);
+}
+
+.btn-import:hover {
+  background: var(--color-tertiary-hover);
 }
 
 .btn-clear {
-  background: #f44336;
+  background: var(--color-danger);
+}
+
+.btn-clear:hover {
+  background: var(--color-danger-hover);
 }
 
 .btn-primary {
-  background: #4CAF50;
+  background: var(--color-primary);
+}
+
+.btn-primary:hover {
+  background: var(--color-primary-hover);
 }
 
 .btn-secondary {
-  background: #FF9800;
+  background: var(--color-secondary);
+}
+
+.btn-secondary:hover {
+  background: var(--color-secondary-hover);
 }
 
 .btn-tertiary {
-  background: #2196F3;
+  background: var(--color-tertiary);
+}
+
+.btn-tertiary:hover {
+  background: var(--color-tertiary-hover);
 }
 
 .btn-remove {
-  background: #f44336;
+  background: var(--color-danger);
   color: white;
   border: none;
-  padding: 5px 10px;
-  border-radius: 4px;
+  padding: 0.5rem 0.875rem;
+  border-radius: 6px;
   cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-remove:hover {
+  background: var(--color-danger-hover);
+  transform: scale(1.05);
 }
 
 .file-input {
@@ -67,81 +120,178 @@
 }
 
 .alert {
-  padding: 10px;
-  border-radius: 4px;
-  margin-bottom: 20px;
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
   border: 1px solid;
+  font-weight: 500;
+  box-shadow: 0 2px 4px var(--color-shadow);
 }
 
 .alert-error {
-  background: #ffebee;
-  color: #c62828;
-  border-color: #ef5350;
+  background: var(--color-error-bg);
+  color: var(--color-error);
+  border-color: var(--color-error);
 }
 
 .alert-success {
-  background: #e8f5e9;
-  color: #2e7d32;
-  border-color: #66bb6a;
+  background: var(--color-success-bg);
+  color: var(--color-success);
+  border-color: var(--color-success);
 }
 
 .section {
-  margin-bottom: 30px;
+  margin-bottom: 2.5rem;
+  background: var(--color-card);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px var(--color-shadow);
+  border: 1px solid var(--color-border);
+}
+
+.section h2 {
+  color: var(--color-text);
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--color-border);
 }
 
 .info-display {
-  margin-top: 10px;
-  padding: 10px;
-  border-radius: 4px;
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  background: var(--color-background-alt);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  line-height: 1.6;
 }
 
 .profile-display {
-  background: #f0f0f0;
+  background: var(--color-background-alt);
+  border-left: 4px solid var(--color-tertiary);
 }
 
 .ssa-display {
-  background: #e8f5e9;
+  background: var(--color-success-bg);
+  border-left: 4px solid var(--color-success);
 }
 
 .accounts-group {
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
+}
+
+.accounts-group h3 {
+  color: var(--color-text);
+  margin-bottom: 1rem;
+  font-weight: 600;
 }
 
 .account-card {
-  padding: 10px;
-  margin-bottom: 8px;
-  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  transition: all 0.2s ease;
+  background: var(--color-card);
+}
+
+.account-card:hover {
+  background: var(--color-card-hover);
+  box-shadow: 0 2px 8px var(--color-shadow);
+  transform: translateX(2px);
+}
+
+.account-card-roth {
+  border-left: 4px solid var(--color-primary);
+}
+
+.account-card-traditional {
+  border-left: 4px solid var(--color-secondary);
+}
+
+.account-card-taxable {
+  border-left: 4px solid var(--color-tertiary);
+}
+
+.account-card span {
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.summary-container {
+  padding: 1.5rem;
+  background: var(--color-background-alt);
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+}
+
+.summary-item {
+  margin-bottom: 1rem;
+  color: var(--color-text);
+  font-size: 1.05rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.summary-item strong {
+  color: var(--color-text);
+}
+
+.summary-total {
+  font-size: 1.4rem;
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 2px solid var(--color-border);
+  font-weight: 700;
+  color: var(--color-text);
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.account-card-roth {
-  background: #e8f5e9;
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .app-container {
+    padding: 1rem;
+  }
+  
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .header-actions {
+    width: 100%;
+  }
+  
+  .btn {
+    flex: 1;
+    text-align: center;
+  }
+  
+  .account-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .btn-remove {
+    align-self: flex-end;
+  }
+  
+  .summary-item,
+  .summary-total {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
 }
-
-.account-card-traditional {
-  background: #fff3e0;
-}
-
-.account-card-taxable {
-  background: #e3f2fd;
-}
-
-.summary-container {
-  padding: 20px;
-  background: #f5f5f5;
-  border-radius: 4px;
-}
-
-.summary-item {
-  margin-bottom: 10px;
-}
-
-.summary-total {
-  font-size: 1.2em;
-  margin-top: 15px;
-  padding-top: 15px;
-  border-top: 2px solid #ccc;
-}
-
