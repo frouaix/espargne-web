@@ -223,13 +223,13 @@ function App(): ReactElement {
       <section className="section">
         <div className="section-header" onClick={() => toggleSection('profile')}>
           <h2>User Profile</h2>
+          {collapsedSections['profile'] && userProfile && (
+            <span className="section-summary">
+              Born {userProfile.birthYear}, {userProfile.filingStatus}, Retirement at {userProfile.retirementAge}
+            </span>
+          )}
           <span className={`section-toggle ${collapsedSections['profile'] ? 'collapsed' : ''}`}>▼</span>
         </div>
-        {collapsedSections['profile'] && userProfile && (
-          <div className="section-summary">
-            Born {userProfile.birthYear}, {userProfile.filingStatus}, Retirement at {userProfile.retirementAge}
-          </div>
-        )}
         <div className={`section-content ${collapsedSections['profile'] ? 'collapsed' : ''}`}>
           <UserProfileForm onSave={handleProfileSave} />
           {userProfile && (() => {
@@ -248,13 +248,13 @@ function App(): ReactElement {
       <section className="section">
         <div className="section-header" onClick={() => toggleSection('retirement')}>
           <h2>Retirement Accounts</h2>
+          {collapsedSections['retirement'] && (
+            <span className="section-summary">
+              {rothAccounts.length} Roth: ${rothAccounts.reduce((sum, acc) => sum + acc.balance, 0).toLocaleString()} • {traditionalAccounts.length} Traditional: ${traditionalAccounts.reduce((sum, acc) => sum + acc.balance, 0).toLocaleString()}
+            </span>
+          )}
           <span className={`section-toggle ${collapsedSections['retirement'] ? 'collapsed' : ''}`}>▼</span>
         </div>
-        {collapsedSections['retirement'] && (
-          <div className="section-summary">
-            {rothAccounts.length} Roth account(s): ${rothAccounts.reduce((sum, acc) => sum + acc.balance, 0).toLocaleString()} • {traditionalAccounts.length} Traditional account(s): ${traditionalAccounts.reduce((sum, acc) => sum + acc.balance, 0).toLocaleString()}
-          </div>
-        )}
         <div className={`section-content ${collapsedSections['retirement'] ? 'collapsed' : ''}`}>
         <div className="accounts-group">
           <h3>Roth IRA / 401(k) ({rothAccounts.length})</h3>
@@ -327,13 +327,13 @@ function App(): ReactElement {
       <section className="section">
         <div className="section-header" onClick={() => toggleSection('taxable')}>
           <h2>Taxable Accounts</h2>
+          {collapsedSections['taxable'] && (
+            <span className="section-summary">
+              {taxableAccounts.length} Taxable: ${taxableAccounts.reduce((sum, acc) => sum + acc.balance, 0).toLocaleString()} • {realEstateAccounts.length} Real Estate: ${realEstateAccounts.reduce((sum, acc) => acc.accountType === 'realEstate' ? sum + acc.currentValue : sum, 0).toLocaleString()}
+            </span>
+          )}
           <span className={`section-toggle ${collapsedSections['taxable'] ? 'collapsed' : ''}`}>▼</span>
         </div>
-        {collapsedSections['taxable'] && (
-          <div className="section-summary">
-            {taxableAccounts.length} Taxable account(s): ${taxableAccounts.reduce((sum, acc) => sum + acc.balance, 0).toLocaleString()} • {realEstateAccounts.length} Real Estate: ${realEstateAccounts.reduce((sum, acc) => acc.accountType === 'realEstate' ? sum + acc.currentValue : sum, 0).toLocaleString()}
-          </div>
-        )}
         <div className={`section-content ${collapsedSections['taxable'] ? 'collapsed' : ''}`}>
         <div className="accounts-group">
           <h3>Brokerage Accounts ({taxableAccounts.length})</h3>
@@ -417,13 +417,13 @@ function App(): ReactElement {
       <section className="section">
         <div className="section-header" onClick={() => toggleSection('ssa')}>
           <h2>Social Security</h2>
+          {collapsedSections['ssa'] && ssaIncome && (
+            <span className="section-summary">
+              ${ssaIncome.fraMonthlyBenefit.toLocaleString()}/month at FRA, claiming at age {ssaIncome.claimingAge}
+            </span>
+          )}
           <span className={`section-toggle ${collapsedSections['ssa'] ? 'collapsed' : ''}`}>▼</span>
         </div>
-        {collapsedSections['ssa'] && ssaIncome && (
-          <div className="section-summary">
-            ${ssaIncome.fraMonthlyBenefit.toLocaleString()}/month at FRA, claiming at age {ssaIncome.claimingAge}
-          </div>
-        )}
         <div className={`section-content ${collapsedSections['ssa'] ? 'collapsed' : ''}`}>
         <SSAIncomeForm onSave={handleSSAIncomeSave(setSsaIncome)} />
         {ssaIncome && (() => {
@@ -441,13 +441,13 @@ function App(): ReactElement {
       <section className="section">
         <div className="section-header" onClick={() => toggleSection('liabilities')}>
           <h2>Liabilities</h2>
+          {collapsedSections['liabilities'] && (
+            <span className="section-summary">
+              {mortgageAccounts.length} Mortgage(s): ${mortgageAccounts.reduce((sum, acc) => acc.accountType === 'mortgage' ? sum + acc.principalBalance : sum, 0).toLocaleString()}
+            </span>
+          )}
           <span className={`section-toggle ${collapsedSections['liabilities'] ? 'collapsed' : ''}`}>▼</span>
         </div>
-        {collapsedSections['liabilities'] && (
-          <div className="section-summary">
-            {mortgageAccounts.length} Mortgage(s): ${mortgageAccounts.reduce((sum, acc) => acc.accountType === 'mortgage' ? sum + acc.principalBalance : sum, 0).toLocaleString()}
-          </div>
-        )}
         <div className={`section-content ${collapsedSections['liabilities'] ? 'collapsed' : ''}`}>
         <div className="accounts-group">
           <h3>Mortgages ({mortgageAccounts.length})</h3>
@@ -493,30 +493,30 @@ function App(): ReactElement {
       <section className="section">
         <div className="section-header" onClick={() => toggleSection('summary')}>
           <h2>Portfolio Summary</h2>
+          {collapsedSections['summary'] && (() => {
+            const totalAssets = accounts
+              .filter(acc => acc.accountType !== 'mortgage')
+              .reduce((sum, acc) => {
+                if (acc.accountType === 'realEstate') {
+                  return sum + acc.currentValue;
+                }
+                return sum + acc.balance;
+              }, 0);
+            const totalLiabilities = mortgageAccounts
+              .reduce((sum, acc) => {
+                if (acc.accountType === 'mortgage') {
+                  return sum + acc.principalBalance;
+                }
+                return sum;
+              }, 0);
+            return (
+              <span className="section-summary">
+                Assets: ${totalAssets.toLocaleString()} • Liabilities: ${totalLiabilities.toLocaleString()} • Net Worth: ${(totalAssets - totalLiabilities).toLocaleString()}
+              </span>
+            );
+          })()}
           <span className={`section-toggle ${collapsedSections['summary'] ? 'collapsed' : ''}`}>▼</span>
         </div>
-        {collapsedSections['summary'] && (() => {
-          const totalAssets = accounts
-            .filter(acc => acc.accountType !== 'mortgage')
-            .reduce((sum, acc) => {
-              if (acc.accountType === 'realEstate') {
-                return sum + acc.currentValue;
-              }
-              return sum + acc.balance;
-            }, 0);
-          const totalLiabilities = mortgageAccounts
-            .reduce((sum, acc) => {
-              if (acc.accountType === 'mortgage') {
-                return sum + acc.principalBalance;
-              }
-              return sum;
-            }, 0);
-          return (
-            <div className="section-summary">
-              Assets: ${totalAssets.toLocaleString()} • Liabilities: ${totalLiabilities.toLocaleString()} • Net Worth: ${(totalAssets - totalLiabilities).toLocaleString()}
-            </div>
-          );
-        })()}
         <div className={`section-content ${collapsedSections['summary'] ? 'collapsed' : ''}`}>
         <div className="summary-container">
           <div className="summary-item">
