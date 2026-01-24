@@ -185,11 +185,46 @@ function App(): ReactElement {
     }));
   };
 
+  const collapseAll = (): void => {
+    const allSections = ['profile', 'retirement', 'taxable', 'ssa', 'liabilities', 'summary'];
+    const newCollapsedSections: Record<string, boolean> = {};
+    allSections.forEach(section => {
+      newCollapsedSections[section] = true;
+    });
+    setCollapsedSections(newCollapsedSections);
+
+    const allCardIds = accounts.map(acc => acc.accountId);
+    const newCollapsedCards: Record<string, boolean> = {};
+    allCardIds.forEach(cardId => {
+      newCollapsedCards[cardId] = true;
+    });
+    setCollapsedCards(newCollapsedCards);
+  };
+
+  const expandAll = (): void => {
+    setCollapsedSections({});
+    setCollapsedCards({});
+  };
+
   return (
     <div className="app-container">
       <div className="header">
         <h1>Retirement Savings Calculator</h1>
         <div className="header-actions">
+          <button 
+            onClick={() => {
+              const hasAnyExpanded = Object.keys(collapsedSections).length === 0 || 
+                Object.values(collapsedSections).some(val => !val);
+              if (hasAnyExpanded) {
+                collapseAll();
+              } else {
+                expandAll();
+              }
+            }} 
+            className="btn btn-tertiary"
+          >
+            {Object.keys(collapsedSections).length === 0 || Object.values(collapsedSections).some(val => !val) ? '📉 Collapse All' : '📈 Expand All'}
+          </button>
           <button onClick={handleExport} className="btn btn-export">
             📥 Export Data
           </button>
