@@ -215,12 +215,19 @@ function App(): ReactElement {
         
         <div className="accounts-group">
           <h3>Roth IRA / 401(k) ({rothAccounts.length})</h3>
-          {rothAccounts.map(({ accountId, balance }) => (
-            <div key={accountId} className="account-card account-card-roth">
-              <span>Balance: ${balance.toLocaleString()}</span>
-              <button onClick={() => handleAccountRemove(accountId)} className="btn-remove">Remove</button>
-            </div>
-          ))}
+          <div className="accounts-grid">
+            {rothAccounts.map(({ accountId, balance }) => (
+              <div key={accountId} className="account-card account-card-roth">
+                <div className="account-card-content">
+                  <div className="account-card-balance">${balance.toLocaleString()}</div>
+                  <div className="account-card-details">Roth Account</div>
+                </div>
+                <div className="account-card-actions">
+                  <button onClick={() => handleAccountRemove(accountId)} className="btn-remove">Remove</button>
+                </div>
+              </div>
+            ))}
+          </div>
           {showRothForm ? (
             <RothAccountForm onSave={handleAccountSave} />
           ) : (
@@ -230,12 +237,19 @@ function App(): ReactElement {
 
         <div className="accounts-group">
           <h3>Traditional IRA / 401(k) ({traditionalAccounts.length})</h3>
-          {traditionalAccounts.map(({ accountId, balance }) => (
-            <div key={accountId} className="account-card account-card-traditional">
-              <span>Balance: ${balance.toLocaleString()}</span>
-              <button onClick={() => handleAccountRemove(accountId)} className="btn-remove">Remove</button>
-            </div>
-          ))}
+          <div className="accounts-grid">
+            {traditionalAccounts.map(({ accountId, balance }) => (
+              <div key={accountId} className="account-card account-card-traditional">
+                <div className="account-card-content">
+                  <div className="account-card-balance">${balance.toLocaleString()}</div>
+                  <div className="account-card-details">Traditional Account</div>
+                </div>
+                <div className="account-card-actions">
+                  <button onClick={() => handleAccountRemove(accountId)} className="btn-remove">Remove</button>
+                </div>
+              </div>
+            ))}
+          </div>
           {showTraditionalForm ? (
             <TraditionalAccountForm onSave={handleAccountSave} />
           ) : (
@@ -248,18 +262,23 @@ function App(): ReactElement {
         <h2>Taxable Accounts</h2>
         <div className="accounts-group">
           <h3>Brokerage Accounts ({taxableAccounts.length})</h3>
-          {taxableAccounts.map(({ accountId, balance, costBasis }) => (
-            <div key={accountId} className="account-card account-card-taxable">
-              <div>
-                <span>Balance: ${balance.toLocaleString()}</span>
-                {' | '}
-                <span>Cost Basis: ${costBasis.toLocaleString()}</span>
-                {' | '}
-                <span>Gains: ${(balance - costBasis).toLocaleString()}</span>
+          <div className="accounts-grid">
+            {taxableAccounts.map(({ accountId, balance, costBasis }) => (
+              <div key={accountId} className="account-card account-card-taxable">
+                <div className="account-card-content">
+                  <div className="account-card-balance">${balance.toLocaleString()}</div>
+                  <div className="account-card-details">
+                    Cost Basis: ${costBasis.toLocaleString()}
+                    <br />
+                    Gains: ${(balance - costBasis).toLocaleString()}
+                  </div>
+                </div>
+                <div className="account-card-actions">
+                  <button onClick={() => handleAccountRemove(accountId)} className="btn-remove">Remove</button>
+                </div>
               </div>
-              <button onClick={() => handleAccountRemove(accountId)} className="btn-remove">Remove</button>
-            </div>
-          ))}
+            ))}
+          </div>
           {showTaxableForm ? (
             <TaxableAccountForm onSave={handleAccountSave} />
           ) : (
