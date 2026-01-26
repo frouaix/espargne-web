@@ -7,6 +7,7 @@ import { TaxableAccountForm } from './components/TaxableAccountForm';
 import { RealEstateAccountForm } from './components/RealEstateAccountForm';
 import { MortgageAccountForm } from './components/MortgageAccountForm';
 import { SSAIncomeForm, type SSAIncomeData } from './components/SSAIncomeForm';
+import { ScenarioRunner } from './components/ScenarioRunner';
 import { STORAGE_KEYS } from './utils/storage';
 import { createExportFile, type ExportData, type Account } from './utils/export';
 import { validateUserProfile, validateAccount } from './utils/validation';
@@ -613,6 +614,15 @@ function App(): ReactElement {
         </div>
         </div>
       </section>
+
+      {/* Scenario Runner - only show if user profile is configured */}
+      {userProfile && accounts.length > 0 && (
+        <ScenarioRunner 
+          userProfile={userProfile} 
+          accounts={accounts}
+          ssaIncome={ssaIncome}
+        />
+      )}
     </div>
   );
 }
