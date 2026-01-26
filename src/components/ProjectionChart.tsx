@@ -1,6 +1,5 @@
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import type { ProjectionResult } from '../services/api';
-import './ProjectionChart.css';
 
 interface ProjectionChartProps {
   result: ProjectionResult;

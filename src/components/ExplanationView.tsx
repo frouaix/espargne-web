@@ -1,5 +1,4 @@
 import type { ExplanationResponse } from '../services/api';
-import './ExplanationView.css';
 
 interface ExplanationViewProps {
   explanation: ExplanationResponse;

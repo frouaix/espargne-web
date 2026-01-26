@@ -7,7 +7,6 @@ import { runProjection, downloadProjectionCSV, getProjectionExplanation } from '
 import type { ProjectionResponse, ExplanationResponse } from '../services/api';
 import { ProjectionChart } from './ProjectionChart';
 import { ExplanationView } from './ExplanationView';
-import './ScenarioRunner.css';
 
 interface ScenarioRunnerProps {
   userProfile: UserProfileData;
