@@ -14,7 +14,7 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
     year: year.year,
     age: year.age,
     'Total Portfolio': year.total_portfolio_value || year.total_balance || 0,
-    'Taxable': year.taxable_balance || year.balance_taxable || 0,
+    'Brokerage': year.taxable_balance || year.balance_taxable || 0,
     'Traditional': year.traditional_balance || year.balance_traditional || 0,
     'Roth': year.roth_balance || year.balance_roth || 0,
     'Total Income': (year.taxable_withdrawal || year.income_taxable || 0) + 
@@ -24,9 +24,9 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
                      (year.pension || year.income_pension || 0) + 
                      (year.other_income || year.income_other || 0),
     'Social Security': year.social_security || year.income_ssa || 0,
-    'Withdrawals': (year.taxable_withdrawal || year.income_taxable || 0) + 
-                    (year.traditional_withdrawal || year.income_traditional || 0) + 
-                    (year.roth_withdrawal || year.income_roth || 0),
+    'Brokerage Withdrawal': year.taxable_withdrawal || year.income_taxable || 0,
+    'Traditional Withdrawal': year.traditional_withdrawal || year.income_traditional || 0,
+    'Roth Withdrawal': year.roth_withdrawal || year.income_roth || 0,
     'Taxes': year.taxes || 0,
   }));
 
@@ -80,7 +80,7 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
           <Legend />
           <Area 
             type="monotone" 
-            dataKey="Taxable" 
+            dataKey="Brokerage" 
             stackId="1"
             stroke="#8884d8" 
             fill="#8884d8" 
@@ -140,7 +140,9 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
           />
           <Tooltip formatter={(value: number) => formatChartCurrency(value)} />
           <Legend />
-          <Bar dataKey="Withdrawals" fill="#4CAF50" />
+          <Bar dataKey="Brokerage Withdrawal" stackId="withdrawals" fill="#8884d8" />
+          <Bar dataKey="Traditional Withdrawal" stackId="withdrawals" fill="#82ca9d" />
+          <Bar dataKey="Roth Withdrawal" stackId="withdrawals" fill="#ffc658" />
           <Bar dataKey="Social Security" fill="#2196F3" />
           <Bar dataKey="Taxes" fill="#F44336" />
         </BarChart>
@@ -155,7 +157,7 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
               <th>Age</th>
               <th className="align-right">Income</th>
               <th className="align-right">Taxes</th>
-              <th className="align-right">Taxable</th>
+              <th className="align-right">Brokerage</th>
               <th className="align-right">Traditional</th>
               <th className="align-right">Roth</th>
               <th className="align-right">Total</th>

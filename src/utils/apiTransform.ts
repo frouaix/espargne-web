@@ -90,6 +90,11 @@ function convertAccount(account: Account, index: number) {
   // Add cost basis for taxable accounts
   if (account.accountType === 'taxable' && 'costBasis' in account) {
     baseAccount.cost_basis = account.costBasis.toString();
+    console.log('DEBUG: Taxable account cost basis:', {
+      balance: account.balance,
+      costBasis: account.costBasis,
+      sent: baseAccount.cost_basis
+    });
   } else {
     baseAccount.cost_basis = null;
   }
