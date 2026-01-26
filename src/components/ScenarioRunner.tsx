@@ -3,6 +3,7 @@ import type { UserProfileData } from './UserProfileForm';
 import type { SSAIncomeData } from './SSAIncomeForm';
 import type { Account } from '../utils/export';
 import { createProjectionRequest } from '../utils/apiTransform';
+import { formatCurrency } from '../utils/format';
 import { runProjection, downloadProjectionCSV, getProjectionExplanation } from '../services/api';
 import type { ProjectionResponse, ExplanationResponse } from '../services/api';
 import { ProjectionChart } from './ProjectionChart';
@@ -120,7 +121,7 @@ export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRun
       <div className="portfolio-summary">
         <h3>Current Portfolio</h3>
         <p>
-          <strong>Total Balance:</strong> ${totalBalance.toLocaleString()}<br />
+          <strong>Total Balance:</strong> ${formatCurrency(totalBalance)}<br />
           <strong>Accounts:</strong> {supportedAccounts.length} 
           ({supportedAccounts.map(a => a.accountType).join(', ')})
         </p>
@@ -137,7 +138,7 @@ export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRun
             value={withdrawalRate}
             onChange={(e) => setWithdrawalRate(parseFloat(e.target.value))}
           />
-          <small>{(withdrawalRate * 100).toFixed(2)}% = ${(totalBalance * withdrawalRate).toLocaleString()}/year</small>
+          <small>{(withdrawalRate * 100).toFixed(2)}% = ${formatCurrency(totalBalance * withdrawalRate)}/year</small>
         </label>
       </div>
 

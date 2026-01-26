@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatCurrency } from '../utils/format';
 
 export interface AccountsListProps {
   accounts: Array<{ id: string; type: string; balance: number }>;
@@ -18,7 +19,7 @@ export const AccountsList: React.FC<AccountsListProps> = ({ accounts, onRemove }
           <li key={account.id} className="account-item">
             <div className="account-info">
               <span className="account-type">{account.type}</span>
-              <span className="account-balance">${account.balance.toLocaleString('en-US', { maximumFractionDigits: 2 })}</span>
+              <span className="account-balance">${formatCurrency(account.balance)}</span>
             </div>
             <button
               type="button"
@@ -32,7 +33,7 @@ export const AccountsList: React.FC<AccountsListProps> = ({ accounts, onRemove }
       </ul>
       <div className="accounts-total">
         <strong>Total Portfolio Value:</strong>
-        <strong>${accounts.reduce((sum, acc) => sum + acc.balance, 0).toLocaleString('en-US', { maximumFractionDigits: 2 })}</strong>
+        <strong>${formatCurrency(accounts.reduce((sum, acc) => sum + acc.balance, 0))}</strong>
       </div>
     </div>
   );

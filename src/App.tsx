@@ -11,6 +11,7 @@ import { ScenarioRunner } from './components/ScenarioRunner';
 import { STORAGE_KEYS } from './utils/storage';
 import { createExportFile, type ExportData, type Account } from './utils/export';
 import { validateUserProfile, validateAccount } from './utils/validation';
+import { formatCurrency } from './utils/format';
 
 const CURRENT_VERSION = '1.0.0';
 
@@ -286,7 +287,7 @@ function App(): ReactElement {
           <h2>Retirement Accounts</h2>
           {collapsedSections['retirement'] && (
             <span className="section-summary">
-              {rothAccounts.length} Roth: ${rothAccounts.reduce((sum, acc) => sum + acc.balance, 0).toLocaleString()} • {traditionalAccounts.length} Traditional: ${traditionalAccounts.reduce((sum, acc) => sum + acc.balance, 0).toLocaleString()}
+              {rothAccounts.length} Roth: ${formatCurrency(rothAccounts.reduce((sum, acc) => sum + acc.balance, 0))} • {traditionalAccounts.length} Traditional: ${formatCurrency(traditionalAccounts.reduce((sum, acc) => sum + acc.balance, 0))}
             </span>
           )}
           <span className={`section-toggle ${collapsedSections['retirement'] ? 'collapsed' : ''}`}>▼</span>
@@ -301,7 +302,7 @@ function App(): ReactElement {
                 <div key={accountId} className={`account-card account-card-roth ${isCollapsed ? 'collapsed' : ''}`}>
                   <div className="account-card-header" onClick={() => toggleCard(accountId)}>
                     <div className="account-card-summary">
-                      <div className="account-card-balance">${balance.toLocaleString()}</div>
+                      <div className="account-card-balance">${formatCurrency(balance)}</div>
                       {isCollapsed && <span className="account-card-type-label">Roth</span>}
                     </div>
                     <span className={`account-card-toggle ${isCollapsed ? 'collapsed' : ''}`}>▼</span>
@@ -334,7 +335,7 @@ function App(): ReactElement {
                 <div key={accountId} className={`account-card account-card-traditional ${isCollapsed ? 'collapsed' : ''}`}>
                   <div className="account-card-header" onClick={() => toggleCard(accountId)}>
                     <div className="account-card-summary">
-                      <div className="account-card-balance">${balance.toLocaleString()}</div>
+                      <div className="account-card-balance">${formatCurrency(balance)}</div>
                       {isCollapsed && <span className="account-card-type-label">Traditional</span>}
                     </div>
                     <span className={`account-card-toggle ${isCollapsed ? 'collapsed' : ''}`}>▼</span>
@@ -365,7 +366,7 @@ function App(): ReactElement {
           <h2>Taxable Accounts</h2>
           {collapsedSections['taxable'] && (
             <span className="section-summary">
-              {taxableAccounts.length} Taxable: ${taxableAccounts.reduce((sum, acc) => sum + acc.balance, 0).toLocaleString()} • {realEstateAccounts.length} Real Estate: ${realEstateAccounts.reduce((sum, acc) => acc.accountType === 'realEstate' ? sum + acc.currentValue : sum, 0).toLocaleString()}
+              {taxableAccounts.length} Taxable: ${formatCurrency(taxableAccounts.reduce((sum, acc) => sum + acc.balance, 0))} • {realEstateAccounts.length} Real Estate: ${formatCurrency(realEstateAccounts.reduce((sum, acc) => acc.accountType === 'realEstate' ? sum + acc.currentValue : sum, 0))}
             </span>
           )}
           <span className={`section-toggle ${collapsedSections['taxable'] ? 'collapsed' : ''}`}>▼</span>
@@ -381,17 +382,17 @@ function App(): ReactElement {
                 <div key={accountId} className={`account-card account-card-taxable ${isCollapsed ? 'collapsed' : ''}`}>
                   <div className="account-card-header" onClick={() => toggleCard(accountId)}>
                     <div className="account-card-summary">
-                      <div className="account-card-balance">${balance.toLocaleString()}</div>
-                      {isCollapsed && <span className="account-card-type-label">Gains: ${gains.toLocaleString()}</span>}
+                      <div className="account-card-balance">${formatCurrency(balance)}</div>
+                      {isCollapsed && <span className="account-card-type-label">Gains: ${formatCurrency(gains)}</span>}
                     </div>
                     <span className={`account-card-toggle ${isCollapsed ? 'collapsed' : ''}`}>▼</span>
                   </div>
                   <div className={`account-card-details-wrapper ${isCollapsed ? 'collapsed' : ''}`}>
                     <div className="account-card-content">
                       <div className="account-card-details">
-                        Cost Basis: ${costBasis.toLocaleString()}
+                        Cost Basis: ${formatCurrency(costBasis)}
                         <br />
-                        Gains: ${gains.toLocaleString()}
+                        Gains: ${formatCurrency(gains)}
                       </div>
                     </div>
                     <div className="account-card-actions">
@@ -420,7 +421,7 @@ function App(): ReactElement {
                 <div key={accountId} className={`account-card account-card-realEstate ${isCollapsed ? 'collapsed' : ''}`}>
                   <div className="account-card-header" onClick={() => toggleCard(accountId)}>
                     <div className="account-card-summary">
-                      <div className="account-card-balance">${currentValue.toLocaleString()}</div>
+                      <div className="account-card-balance">${formatCurrency(currentValue)}</div>
                       {isCollapsed && <span className="account-card-type-label">{nickname}</span>}
                     </div>
                     <span className={`account-card-toggle ${isCollapsed ? 'collapsed' : ''}`}>▼</span>
@@ -455,7 +456,7 @@ function App(): ReactElement {
           <h2>Social Security</h2>
           {collapsedSections['ssa'] && ssaIncome && (
             <span className="section-summary">
-              ${ssaIncome.fraMonthlyBenefit.toLocaleString()}/month at FRA, claiming at age {ssaIncome.claimingAge}
+              ${formatCurrency(ssaIncome.fraMonthlyBenefit)}/month at FRA, claiming at age {ssaIncome.claimingAge}
             </span>
           )}
           <span className={`section-toggle ${collapsedSections['ssa'] ? 'collapsed' : ''}`}>▼</span>
@@ -466,7 +467,7 @@ function App(): ReactElement {
           const { fraMonthlyBenefit, claimingAge } = ssaIncome;
           return (
             <div className="info-display ssa-display">
-              <strong>Current Plan:</strong> ${fraMonthlyBenefit.toLocaleString()}/month at FRA, 
+              <strong>Current Plan:</strong> ${formatCurrency(fraMonthlyBenefit)}/month at FRA, 
               claiming at age {claimingAge}
             </div>
           );
@@ -479,7 +480,7 @@ function App(): ReactElement {
           <h2>Liabilities</h2>
           {collapsedSections['liabilities'] && (
             <span className="section-summary">
-              {mortgageAccounts.length} Mortgage(s): ${mortgageAccounts.reduce((sum, acc) => acc.accountType === 'mortgage' ? sum + acc.principalBalance : sum, 0).toLocaleString()}
+              {mortgageAccounts.length} Mortgage(s): ${formatCurrency(mortgageAccounts.reduce((sum, acc) => acc.accountType === 'mortgage' ? sum + acc.principalBalance : sum, 0))}
             </span>
           )}
           <span className={`section-toggle ${collapsedSections['liabilities'] ? 'collapsed' : ''}`}>▼</span>
@@ -496,7 +497,7 @@ function App(): ReactElement {
                 <div key={accountId} className={`account-card account-card-mortgage ${isCollapsed ? 'collapsed' : ''}`}>
                   <div className="account-card-header" onClick={() => toggleCard(accountId)}>
                     <div className="account-card-summary">
-                      <div className="account-card-balance">${principalBalance.toLocaleString()}</div>
+                      <div className="account-card-balance">${formatCurrency(principalBalance)}</div>
                       {isCollapsed && <span className="account-card-type-label">{propertyNickname}</span>}
                     </div>
                     <span className={`account-card-toggle ${isCollapsed ? 'collapsed' : ''}`}>▼</span>
@@ -506,7 +507,7 @@ function App(): ReactElement {
                       <div className="account-card-details">
                         {propertyNickname && <div><strong>{propertyNickname}</strong></div>}
                         <div>Rate: {interestRate}% APR</div>
-                        <div>Payment: ${monthlyPayment.toLocaleString()}/month</div>
+                        <div>Payment: ${formatCurrency(monthlyPayment)}/month</div>
                       </div>
                     </div>
                     <div className="account-card-actions">
@@ -547,7 +548,7 @@ function App(): ReactElement {
               }, 0);
             return (
               <span className="section-summary">
-                Assets: ${totalAssets.toLocaleString()} • Liabilities: ${totalLiabilities.toLocaleString()} • Net Worth: ${(totalAssets - totalLiabilities).toLocaleString()}
+                Assets: ${formatCurrency(totalAssets)} • Liabilities: ${formatCurrency(totalLiabilities)} • Net Worth: ${formatCurrency(totalAssets - totalLiabilities)}
               </span>
             );
           })()}
@@ -556,40 +557,40 @@ function App(): ReactElement {
         <div className={`section-content ${collapsedSections['summary'] ? 'collapsed' : ''}`}>
         <div className="summary-container">
           <div className="summary-item">
-            <strong>Total Retirement Accounts:</strong> ${[...rothAccounts, ...traditionalAccounts]
-              .reduce((sum, acc) => sum + acc.balance, 0).toLocaleString()}
+            <strong>Total Retirement Accounts:</strong> ${formatCurrency([...rothAccounts, ...traditionalAccounts]
+              .reduce((sum, acc) => sum + acc.balance, 0))}
           </div>
           <div className="summary-item">
-            <strong>Total Taxable Accounts:</strong> ${taxableAccounts
-              .reduce((sum, acc) => sum + acc.balance, 0).toLocaleString()}
+            <strong>Total Taxable Accounts:</strong> ${formatCurrency(taxableAccounts
+              .reduce((sum, acc) => sum + acc.balance, 0))}
           </div>
           <div className="summary-item">
-            <strong>Total Real Estate:</strong> ${realEstateAccounts
+            <strong>Total Real Estate:</strong> ${formatCurrency(realEstateAccounts
               .reduce((sum, acc) => {
                 if (acc.accountType === 'realEstate') {
                   return sum + acc.currentValue;
                 }
                 return sum;
-              }, 0).toLocaleString()}
+              }, 0))}
           </div>
           <div className="summary-item">
-            <strong>Total Liabilities:</strong> ${mortgageAccounts
+            <strong>Total Liabilities:</strong> ${formatCurrency(mortgageAccounts
               .reduce((sum, acc) => {
                 if (acc.accountType === 'mortgage') {
                   return sum + acc.principalBalance;
                 }
                 return sum;
-              }, 0).toLocaleString()}
+              }, 0))}
           </div>
           <div className="summary-total">
-            <strong>Total Assets:</strong> ${accounts
+            <strong>Total Assets:</strong> ${formatCurrency(accounts
               .filter(acc => acc.accountType !== 'mortgage')
               .reduce((sum, acc) => {
                 if (acc.accountType === 'realEstate') {
                   return sum + acc.currentValue;
                 }
                 return sum + acc.balance;
-              }, 0).toLocaleString()}
+              }, 0))}
           </div>
           <div className="summary-total">
             <strong>Net Worth:</strong> ${(() => {
@@ -608,7 +609,7 @@ function App(): ReactElement {
                   }
                   return sum;
                 }, 0);
-              return (totalAssets - totalLiabilities).toLocaleString();
+              return formatCurrency(totalAssets - totalLiabilities);
             })()}
           </div>
         </div>

@@ -1,5 +1,6 @@
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import type { ProjectionResult } from '../services/api';
+import { formatCurrency } from '../utils/format';
 
 interface ProjectionChartProps {
   result: ProjectionResult;
@@ -29,7 +30,7 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
     'Taxes': year.taxes || 0,
   }));
 
-  const formatCurrency = (value: number) => {
+  const formatChartCurrency = (value: number) => {
     if (value >= 1000000) {
       return `$${(value / 1000000).toFixed(1)}M`;
     }
@@ -48,7 +49,7 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
         <div className="projection-metrics">
           <div>
             <strong>Years Simulated:</strong> {total_years}<br />
-            <strong>Final Portfolio:</strong> ${result.final_portfolio_value.toLocaleString()}<br />
+            <strong>Final Portfolio:</strong> ${formatCurrency(result.final_portfolio_value)}<br />
             {!success && failure_year && (
               <>
                 <strong className="failure-info">Failed in Year:</strong> {failure_year} (age {failure_age})
@@ -56,9 +57,9 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
             )}
           </div>
           <div>
-            <strong>Total Withdrawals:</strong> ${result.total_withdrawals.toLocaleString()}<br />
-            <strong>Total Taxes:</strong> ${result.total_taxes_paid.toLocaleString()}<br />
-            <strong>Net Income:</strong> ${(result.total_withdrawals - result.total_taxes_paid).toLocaleString()}
+            <strong>Total Withdrawals:</strong> ${formatCurrency(result.total_withdrawals)}<br />
+            <strong>Total Taxes:</strong> ${formatCurrency(result.total_taxes_paid)}<br />
+            <strong>Net Income:</strong> ${formatCurrency(result.total_withdrawals - result.total_taxes_paid)}
           </div>
         </div>
       </div>
@@ -72,10 +73,10 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
             label={{ value: 'Year', position: 'insideBottom', offset: -5 }}
           />
           <YAxis 
-            tickFormatter={formatCurrency}
+            tickFormatter={formatChartCurrency}
             label={{ value: 'Portfolio Balance', angle: -90, position: 'insideLeft' }}
           />
-          <Tooltip formatter={(value: number) => formatCurrency(value)} />
+          <Tooltip formatter={(value: number) => formatChartCurrency(value)} />
           <Legend />
           <Area 
             type="monotone" 
@@ -110,10 +111,10 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
             label={{ value: 'Year', position: 'insideBottom', offset: -5 }}
           />
           <YAxis 
-            tickFormatter={formatCurrency}
+            tickFormatter={formatChartCurrency}
             label={{ value: 'Total Value', angle: -90, position: 'insideLeft' }}
           />
-          <Tooltip formatter={(value: number) => formatCurrency(value)} />
+          <Tooltip formatter={(value: number) => formatChartCurrency(value)} />
           <Legend />
           <Line 
             type="monotone" 
@@ -134,10 +135,10 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
             label={{ value: 'Year', position: 'insideBottom', offset: -5 }}
           />
           <YAxis 
-            tickFormatter={formatCurrency}
+            tickFormatter={formatChartCurrency}
             label={{ value: 'Amount', angle: -90, position: 'insideLeft' }}
           />
-          <Tooltip formatter={(value: number) => formatCurrency(value)} />
+          <Tooltip formatter={(value: number) => formatChartCurrency(value)} />
           <Legend />
           <Bar dataKey="Withdrawals" fill="#4CAF50" />
           <Bar dataKey="Social Security" fill="#2196F3" />
@@ -176,22 +177,22 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
                   <td>{year.year}</td>
                   <td>{year.age}</td>
                   <td className="align-right">
-                    ${totalIncome.toLocaleString()}
+                    ${formatCurrency(totalIncome)}
                   </td>
                   <td className="align-right">
-                    ${(year.taxes || 0).toLocaleString()}
+                    ${formatCurrency(year.taxes || 0)}
                   </td>
                   <td className="align-right">
-                    ${taxableBalance.toLocaleString()}
+                    ${formatCurrency(taxableBalance)}
                   </td>
                   <td className="align-right">
-                    ${traditionalBalance.toLocaleString()}
+                    ${formatCurrency(traditionalBalance)}
                   </td>
                   <td className="align-right">
-                    ${rothBalance.toLocaleString()}
+                    ${formatCurrency(rothBalance)}
                   </td>
                   <td className="align-right bold">
-                    ${totalBalance.toLocaleString()}
+                    ${formatCurrency(totalBalance)}
                   </td>
                 </tr>
               );
