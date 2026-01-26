@@ -1,5 +1,6 @@
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import type { ProjectionResult } from '../services/api';
+import './ProjectionChart.css';
 
 interface ProjectionChartProps {
   result: ProjectionResult;
@@ -40,23 +41,18 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
   };
 
   return (
-    <div style={{ marginTop: '30px' }}>
-      <div style={{ 
-        padding: '20px', 
-        background: success ? '#e8f5e9' : '#ffebee',
-        borderRadius: '8px',
-        marginBottom: '20px'
-      }}>
-        <h3 style={{ marginTop: 0 }}>
+    <div>
+      <div className={`projection-result ${success ? 'success' : 'failure'}`}>
+        <h3>
           {success ? '✅ Portfolio Success' : '❌ Portfolio Depleted'}
         </h3>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+        <div className="projection-metrics">
           <div>
             <strong>Years Simulated:</strong> {total_years}<br />
             <strong>Final Portfolio:</strong> ${result.final_portfolio_value.toLocaleString()}<br />
             {!success && failure_year && (
               <>
-                <strong style={{ color: '#c00' }}>Failed in Year:</strong> {failure_year} (age {failure_age})
+                <strong className="failure-info">Failed in Year:</strong> {failure_year} (age {failure_age})
               </>
             )}
           </div>
@@ -106,7 +102,7 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
         </AreaChart>
       </ResponsiveContainer>
 
-      <h3 style={{ marginTop: '40px' }}>Total Portfolio Value</h3>
+      <h3 className="chart-section">Total Portfolio Value</h3>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" />
@@ -130,7 +126,7 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
         </LineChart>
       </ResponsiveContainer>
 
-      <h3 style={{ marginTop: '40px' }}>Annual Income & Taxes</h3>
+      <h3 className="chart-section">Annual Income & Taxes</h3>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" />
@@ -150,24 +146,19 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
         </BarChart>
       </ResponsiveContainer>
 
-      <h3 style={{ marginTop: '40px' }}>Year-by-Year Details</h3>
-      <div style={{ overflowX: 'auto' }}>
-        <table style={{ 
-          width: '100%', 
-          borderCollapse: 'collapse',
-          fontSize: '14px',
-          marginTop: '10px'
-        }}>
+      <h3 className="chart-section">Year-by-Year Details</h3>
+      <div className="details-table-container">
+        <table className="details-table">
           <thead>
-            <tr style={{ background: '#f5f5f5' }}>
-              <th style={{ padding: '10px', textAlign: 'left', borderBottom: '2px solid #ddd' }}>Year</th>
-              <th style={{ padding: '10px', textAlign: 'left', borderBottom: '2px solid #ddd' }}>Age</th>
-              <th style={{ padding: '10px', textAlign: 'right', borderBottom: '2px solid #ddd' }}>Income</th>
-              <th style={{ padding: '10px', textAlign: 'right', borderBottom: '2px solid #ddd' }}>Taxes</th>
-              <th style={{ padding: '10px', textAlign: 'right', borderBottom: '2px solid #ddd' }}>Taxable</th>
-              <th style={{ padding: '10px', textAlign: 'right', borderBottom: '2px solid #ddd' }}>Traditional</th>
-              <th style={{ padding: '10px', textAlign: 'right', borderBottom: '2px solid #ddd' }}>Roth</th>
-              <th style={{ padding: '10px', textAlign: 'right', borderBottom: '2px solid #ddd' }}>Total</th>
+            <tr>
+              <th>Year</th>
+              <th>Age</th>
+              <th className="align-right">Income</th>
+              <th className="align-right">Taxes</th>
+              <th className="align-right">Taxable</th>
+              <th className="align-right">Traditional</th>
+              <th className="align-right">Roth</th>
+              <th className="align-right">Total</th>
             </tr>
           </thead>
           <tbody>
@@ -182,25 +173,25 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
               const totalBalance = year.total_portfolio_value || year.total_balance || 0;
               
               return (
-                <tr key={idx} style={{ borderBottom: '1px solid #eee' }}>
-                  <td style={{ padding: '8px' }}>{year.year}</td>
-                  <td style={{ padding: '8px' }}>{year.age}</td>
-                  <td style={{ padding: '8px', textAlign: 'right' }}>
+                <tr key={idx}>
+                  <td>{year.year}</td>
+                  <td>{year.age}</td>
+                  <td className="align-right">
                     ${totalIncome.toLocaleString()}
                   </td>
-                  <td style={{ padding: '8px', textAlign: 'right' }}>
+                  <td className="align-right">
                     ${(year.taxes || 0).toLocaleString()}
                   </td>
-                  <td style={{ padding: '8px', textAlign: 'right' }}>
+                  <td className="align-right">
                     ${taxableBalance.toLocaleString()}
                   </td>
-                  <td style={{ padding: '8px', textAlign: 'right' }}>
+                  <td className="align-right">
                     ${traditionalBalance.toLocaleString()}
                   </td>
-                  <td style={{ padding: '8px', textAlign: 'right' }}>
+                  <td className="align-right">
                     ${rothBalance.toLocaleString()}
                   </td>
-                  <td style={{ padding: '8px', textAlign: 'right', fontWeight: 'bold' }}>
+                  <td className="align-right bold">
                     ${totalBalance.toLocaleString()}
                   </td>
                 </tr>

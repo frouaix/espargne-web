@@ -7,6 +7,7 @@ import { runProjection, downloadProjectionCSV, getProjectionExplanation } from '
 import type { ProjectionResponse, ExplanationResponse } from '../services/api';
 import { ProjectionChart } from './ProjectionChart';
 import { ExplanationView } from './ExplanationView';
+import './ScenarioRunner.css';
 
 interface ScenarioRunnerProps {
   userProfile: UserProfileData;
@@ -106,7 +107,7 @@ export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRun
     return (
       <div className="card">
         <h2>📊 Run Simulation</h2>
-        <p style={{ color: '#666' }}>
+        <p className="no-accounts-message">
           Add at least one account (Taxable, Traditional, or Roth) to run a simulation.
         </p>
       </div>
@@ -117,8 +118,8 @@ export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRun
     <div className="card">
       <h2>📊 Run Retirement Simulation</h2>
       
-      <div style={{ marginBottom: '20px', padding: '15px', background: '#f5f5f5', borderRadius: '8px' }}>
-        <h3 style={{ marginTop: 0 }}>Current Portfolio</h3>
+      <div className="portfolio-summary">
+        <h3>Current Portfolio</h3>
         <p>
           <strong>Total Balance:</strong> ${totalBalance.toLocaleString()}<br />
           <strong>Accounts:</strong> {supportedAccounts.length} 
@@ -183,7 +184,7 @@ export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRun
         </label>
       </div>
 
-      <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+      <div className="scenario-actions">
         <button
           onClick={handleRunProjection}
           disabled={loading}
@@ -210,13 +211,7 @@ export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRun
       </div>
 
       {error && (
-        <div style={{ 
-          marginTop: '20px', 
-          padding: '15px', 
-          background: '#fee', 
-          color: '#c00',
-          borderRadius: '8px' 
-        }}>
+        <div className="scenario-error">
           <strong>Error:</strong> {error}
         </div>
       )}

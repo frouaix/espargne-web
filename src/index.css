@@ -16,6 +16,21 @@
   --color-shadow: rgba(0, 0, 0, 0.1);
   --color-shadow-hover: rgba(0, 0, 0, 0.15);
   
+  /* Component-specific colors */
+  --text-color: #1a1a1a;
+  --border-color: #e0e0e0;
+  --table-header-bg: #f5f5f5;
+  --card-bg: #f9f9f9;
+  --code-bg: #fafafa;
+  
+  /* Status colors */
+  --success-bg: #e8f5e9;
+  --error-bg: #ffebee;
+  --warning-bg: #fff3e0;
+  --info-bg: #e3f2fd;
+  --purple-bg: #f3e5f5;
+  --yellow-bg: #fff9c4;
+  
   /* Accent colors */
   --color-primary: #4CAF50;
   --color-primary-hover: #45a049;
@@ -52,8 +67,22 @@
     --color-shadow: rgba(0, 0, 0, 0.3);
     --color-shadow-hover: rgba(0, 0, 0, 0.4);
     
+    /* Component-specific dark mode colors */
+    --text-color: #e0e0e0;
+    --border-color: #404040;
+    --table-header-bg: #2a2a2a;
+    --card-bg: #2a2a2a;
+    --code-bg: #1f1f1f;
+    
+    /* Status colors with proper contrast */
     --color-success-bg: rgba(76, 175, 80, 0.15);
     --color-error-bg: rgba(244, 67, 54, 0.15);
+    --success-bg: rgba(76, 175, 80, 0.15);
+    --error-bg: rgba(244, 67, 54, 0.15);
+    --warning-bg: rgba(255, 152, 0, 0.15);
+    --info-bg: rgba(33, 150, 243, 0.15);
+    --purple-bg: rgba(156, 39, 176, 0.15);
+    --yellow-bg: rgba(255, 235, 59, 0.15);
   }
 }
 
