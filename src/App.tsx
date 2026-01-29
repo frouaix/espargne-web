@@ -296,20 +296,25 @@ function App(): ReactElement {
         <div className="accounts-group">
           <h3>Roth IRA / 401(k) ({rothAccounts.length})</h3>
           <div className="accounts-grid">
-            {rothAccounts.map(({ accountId, balance }) => {
+            {rothAccounts.map((acc) => {
+              if (acc.accountType !== 'roth') return null;
+              const { accountId, balance, nickname } = acc;
               const isCollapsed = collapsedCards[accountId];
               return (
                 <div key={accountId} className={`account-card account-card-roth ${isCollapsed ? 'collapsed' : ''}`}>
                   <div className="account-card-header" onClick={() => toggleCard(accountId)}>
                     <div className="account-card-summary">
                       <div className="account-card-balance">${formatCurrency(balance)}</div>
-                      {isCollapsed && <span className="account-card-type-label">Roth</span>}
+                      {isCollapsed && <span className="account-card-type-label">{nickname}</span>}
                     </div>
                     <span className={`account-card-toggle ${isCollapsed ? 'collapsed' : ''}`}>▼</span>
                   </div>
                   <div className={`account-card-details-wrapper ${isCollapsed ? 'collapsed' : ''}`}>
                     <div className="account-card-content">
-                      <div className="account-card-details">Roth Account</div>
+                      <div className="account-card-details">
+                        {nickname && <div><strong>{nickname}</strong></div>}
+                        <div>Roth Account</div>
+                      </div>
                     </div>
                     <div className="account-card-actions">
                       <button onClick={(e) => { e.stopPropagation(); handleAccountRemove(accountId); }} className="btn-remove">Remove</button>
@@ -329,20 +334,25 @@ function App(): ReactElement {
         <div className="accounts-group">
           <h3>Traditional IRA / 401(k) ({traditionalAccounts.length})</h3>
           <div className="accounts-grid">
-            {traditionalAccounts.map(({ accountId, balance }) => {
+            {traditionalAccounts.map((acc) => {
+              if (acc.accountType !== 'traditional') return null;
+              const { accountId, balance, nickname } = acc;
               const isCollapsed = collapsedCards[accountId];
               return (
                 <div key={accountId} className={`account-card account-card-traditional ${isCollapsed ? 'collapsed' : ''}`}>
                   <div className="account-card-header" onClick={() => toggleCard(accountId)}>
                     <div className="account-card-summary">
                       <div className="account-card-balance">${formatCurrency(balance)}</div>
-                      {isCollapsed && <span className="account-card-type-label">Traditional</span>}
+                      {isCollapsed && <span className="account-card-type-label">{nickname}</span>}
                     </div>
                     <span className={`account-card-toggle ${isCollapsed ? 'collapsed' : ''}`}>▼</span>
                   </div>
                   <div className={`account-card-details-wrapper ${isCollapsed ? 'collapsed' : ''}`}>
                     <div className="account-card-content">
-                      <div className="account-card-details">Traditional Account</div>
+                      <div className="account-card-details">
+                        {nickname && <div><strong>{nickname}</strong></div>}
+                        <div>Traditional Account</div>
+                      </div>
                     </div>
                     <div className="account-card-actions">
                       <button onClick={(e) => { e.stopPropagation(); handleAccountRemove(accountId); }} className="btn-remove">Remove</button>
@@ -375,7 +385,9 @@ function App(): ReactElement {
         <div className="accounts-group">
           <h3>Brokerage Accounts ({taxableAccounts.length})</h3>
           <div className="accounts-grid">
-            {taxableAccounts.map(({ accountId, balance, costBasis }) => {
+            {taxableAccounts.map((acc) => {
+              if (acc.accountType !== 'taxable') return null;
+              const { accountId, balance, costBasis, nickname } = acc;
               const isCollapsed = collapsedCards[accountId];
               const gains = balance - costBasis;
               return (
@@ -383,16 +395,16 @@ function App(): ReactElement {
                   <div className="account-card-header" onClick={() => toggleCard(accountId)}>
                     <div className="account-card-summary">
                       <div className="account-card-balance">${formatCurrency(balance)}</div>
-                      {isCollapsed && <span className="account-card-type-label">Gains: ${formatCurrency(gains)}</span>}
+                      {isCollapsed && <span className="account-card-type-label">{nickname}</span>}
                     </div>
                     <span className={`account-card-toggle ${isCollapsed ? 'collapsed' : ''}`}>▼</span>
                   </div>
                   <div className={`account-card-details-wrapper ${isCollapsed ? 'collapsed' : ''}`}>
                     <div className="account-card-content">
                       <div className="account-card-details">
-                        Cost Basis: ${formatCurrency(costBasis)}
-                        <br />
-                        Gains: ${formatCurrency(gains)}
+                        {nickname && <div><strong>{nickname}</strong></div>}
+                        <div>Cost Basis: ${formatCurrency(costBasis)}</div>
+                        <div>Gains: ${formatCurrency(gains)}</div>
                       </div>
                     </div>
                     <div className="account-card-actions">
