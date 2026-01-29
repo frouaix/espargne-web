@@ -462,7 +462,7 @@ function App(): ReactElement {
           <span className={`section-toggle ${collapsedSections['ssa'] ? 'collapsed' : ''}`}>▼</span>
         </div>
         <div className={`section-content ${collapsedSections['ssa'] ? 'collapsed' : ''}`}>
-        <SSAIncomeForm onSave={handleSSAIncomeSave(setSsaIncome)} />
+        <SSAIncomeForm onSave={handleSSAIncomeSave(setSsaIncome)} initialData={ssaIncome} />
         {ssaIncome && (() => {
           const { fraMonthlyBenefit, claimingAge } = ssaIncome;
           return (

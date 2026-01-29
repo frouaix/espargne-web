@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 interface SSAIncomeFormProps {
   onSave: (data: SSAIncomeData) => void;
+  initialData?: SSAIncomeData | null;
 }
 
 export interface SSAIncomeData {
@@ -9,9 +10,9 @@ export interface SSAIncomeData {
   claimingAge: number;
 }
 
-export const SSAIncomeForm: React.FC<SSAIncomeFormProps> = ({ onSave }) => {
-  const [fraMonthlyBenefit, setFraMonthlyBenefit] = useState('');
-  const [claimingAge, setClaimingAge] = useState('67');
+export const SSAIncomeForm: React.FC<SSAIncomeFormProps> = ({ onSave, initialData }) => {
+  const [fraMonthlyBenefit, setFraMonthlyBenefit] = useState(initialData?.fraMonthlyBenefit?.toString() || '');
+  const [claimingAge, setClaimingAge] = useState(initialData?.claimingAge?.toString() || '67');
   const [error, setError] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {

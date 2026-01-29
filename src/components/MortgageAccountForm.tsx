@@ -100,7 +100,7 @@ export const MortgageAccountForm = ({ onSave }: MortgageAccountFormProps): React
             onChange={(e): void => setMonthlyPayment(e.target.value)}
             placeholder="e.g., 1500"
             min="0"
-            step="10"
+            step="0.01"
             required
             style={{ marginLeft: '10px', padding: '5px' }}
           />
