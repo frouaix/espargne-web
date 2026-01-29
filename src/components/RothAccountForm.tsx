@@ -8,10 +8,12 @@ interface RothAccountFormProps {
 export interface RothAccountData {
   accountId: string;
   accountType: 'roth';
+  nickname: string;
   balance: number;
 }
 
 export const RothAccountForm: React.FC<RothAccountFormProps> = ({ accountId, onSave }) => {
+  const [nickname, setNickname] = useState('');
   const [balance, setBalance] = useState('');
   const [error, setError] = useState('');
 
@@ -19,8 +21,8 @@ export const RothAccountForm: React.FC<RothAccountFormProps> = ({ accountId, onS
     e.preventDefault();
     setError('');
 
-    if (!balance) {
-      setError('Balance is required');
+    if (!nickname.trim() || !balance) {
+      setError('All fields are required');
       return;
     }
 
@@ -33,13 +35,29 @@ export const RothAccountForm: React.FC<RothAccountFormProps> = ({ accountId, onS
     onSave({
       accountId: accountId || `roth-${Date.now()}`,
       accountType: 'roth',
+      nickname: nickname.trim(),
       balance: balanceNum,
     });
+    
+    setNickname('');
+    setBalance('');
   };
 
   return (
     <form onSubmit={handleSubmit} className="account-form">
       <h3>Roth IRA / 401(k)</h3>
+      
+      <div className="form-group">
+        <label htmlFor="nickname">Account Nickname</label>
+        <input
+          id="nickname"
+          type="text"
+          value={nickname}
+          onChange={(e) => setNickname(e.target.value)}
+          placeholder="e.g., Fidelity Roth IRA"
+          required
+        />
+      </div>
       
       <div className="form-group">
         <label htmlFor="balance">Account Balance ($)</label>

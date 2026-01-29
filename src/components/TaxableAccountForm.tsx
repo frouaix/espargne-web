@@ -8,11 +8,13 @@ interface TaxableAccountFormProps {
 export interface TaxableAccountData {
   accountId: string;
   accountType: 'taxable';
+  nickname: string;
   balance: number;
   costBasis: number;
 }
 
 export const TaxableAccountForm: React.FC<TaxableAccountFormProps> = ({ accountId, onSave }) => {
+  const [nickname, setNickname] = useState('');
   const [balance, setBalance] = useState('');
   const [costBasis, setCostBasis] = useState('');
   const [error, setError] = useState('');
@@ -21,7 +23,7 @@ export const TaxableAccountForm: React.FC<TaxableAccountFormProps> = ({ accountI
     e.preventDefault();
     setError('');
 
-    if (!balance || !costBasis) {
+    if (!nickname.trim() || !balance || !costBasis) {
       setError('All fields are required');
       return;
     }
@@ -42,14 +44,31 @@ export const TaxableAccountForm: React.FC<TaxableAccountFormProps> = ({ accountI
     onSave({
       accountId: accountId || `taxable-${Date.now()}`,
       accountType: 'taxable',
+      nickname: nickname.trim(),
       balance: balanceNum,
       costBasis: basisNum,
     });
+    
+    setNickname('');
+    setBalance('');
+    setCostBasis('');
   };
 
   return (
     <form onSubmit={handleSubmit} className="account-form">
       <h3>Taxable Brokerage Account</h3>
+      
+      <div className="form-group">
+        <label htmlFor="nickname">Account Nickname</label>
+        <input
+          id="nickname"
+          type="text"
+          value={nickname}
+          onChange={(e) => setNickname(e.target.value)}
+          placeholder="e.g., E*TRADE Brokerage"
+          required
+        />
+      </div>
       
       <div className="form-group">
         <label htmlFor="balance">Account Balance ($)</label>

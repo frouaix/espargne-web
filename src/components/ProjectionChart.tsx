@@ -9,26 +9,54 @@ interface ProjectionChartProps {
 export function ProjectionChart({ result }: ProjectionChartProps) {
   const { chart_data, success, failure_year, failure_age, total_years } = result;
 
+  // Get all unique account IDs from the data
+  const accountIds = new Set<string>();
+  chart_data.years_data.forEach(year => {
+    if (year.account_balances) {
+      Object.keys(year.account_balances).forEach(id => accountIds.add(id));
+    }
+  });
+  
+  // Generate colors for each account
+  const colorPalette = [
+    '#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#8dd1e1', 
+    '#a4de6c', '#d0ed57', '#ffc0cb', '#dda0dd', '#20b2aa',
+    '#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#6c5ce7'
+  ];
+  
+  const accountColors: Record<string, string> = {};
+  Array.from(accountIds).forEach((id, idx) => {
+    accountColors[id] = colorPalette[idx % colorPalette.length];
+  });
+
   // Prepare data for visualization
-  const chartData = chart_data.years_data.map(year => ({
-    year: year.year,
-    age: year.age,
-    'Total Portfolio': year.total_portfolio_value || year.total_balance || 0,
-    'Brokerage': year.taxable_balance || year.balance_taxable || 0,
-    'Traditional': year.traditional_balance || year.balance_traditional || 0,
-    'Roth': year.roth_balance || year.balance_roth || 0,
-    'Total Income': (year.taxable_withdrawal || year.income_taxable || 0) + 
-                     (year.traditional_withdrawal || year.income_traditional || 0) + 
-                     (year.roth_withdrawal || year.income_roth || 0) + 
-                     (year.social_security || year.income_ssa || 0) + 
-                     (year.pension || year.income_pension || 0) + 
-                     (year.other_income || year.income_other || 0),
-    'Social Security': year.social_security || year.income_ssa || 0,
-    'Brokerage Withdrawal': year.taxable_withdrawal || year.income_taxable || 0,
-    'Traditional Withdrawal': year.traditional_withdrawal || year.income_traditional || 0,
-    'Roth Withdrawal': year.roth_withdrawal || year.income_roth || 0,
-    'Taxes': year.taxes || 0,
-  }));
+  const chartData = chart_data.years_data.map(year => {
+    const dataPoint: any = {
+      year: year.year,
+      age: year.age,
+      'Total Portfolio': year.total_portfolio_value || year.total_balance || 0,
+      'Total Income': (year.taxable_withdrawal || year.income_taxable || 0) + 
+                       (year.traditional_withdrawal || year.income_traditional || 0) + 
+                       (year.roth_withdrawal || year.income_roth || 0) + 
+                       (year.social_security || year.income_ssa || 0) + 
+                       (year.pension || year.income_pension || 0) + 
+                       (year.other_income || year.income_other || 0),
+      'Social Security': year.social_security || year.income_ssa || 0,
+      'Brokerage Withdrawal': year.taxable_withdrawal || year.income_taxable || 0,
+      'Traditional Withdrawal': year.traditional_withdrawal || year.income_traditional || 0,
+      'Roth Withdrawal': year.roth_withdrawal || year.income_roth || 0,
+      'Taxes': year.taxes || 0,
+    };
+    
+    // Add individual account balances
+    if (year.account_balances) {
+      Object.entries(year.account_balances).forEach(([accountId, balance]) => {
+        dataPoint[accountId] = balance;
+      });
+    }
+    
+    return dataPoint;
+  });
 
   const formatChartCurrency = (value: number) => {
     if (value >= 1000000) {
@@ -78,27 +106,16 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
           />
           <Tooltip formatter={(value: number) => formatChartCurrency(value)} />
           <Legend />
-          <Area 
-            type="monotone" 
-            dataKey="Brokerage" 
-            stackId="1"
-            stroke="#8884d8" 
-            fill="#8884d8" 
-          />
-          <Area 
-            type="monotone" 
-            dataKey="Traditional" 
-            stackId="1"
-            stroke="#82ca9d" 
-            fill="#82ca9d" 
-          />
-          <Area 
-            type="monotone" 
-            dataKey="Roth" 
-            stackId="1"
-            stroke="#ffc658" 
-            fill="#ffc658" 
-          />
+          {Array.from(accountIds).map(accountId => (
+            <Area 
+              key={accountId}
+              type="monotone" 
+              dataKey={accountId} 
+              stackId="1"
+              stroke={accountColors[accountId]} 
+              fill={accountColors[accountId]} 
+            />
+          ))}
         </AreaChart>
       </ResponsiveContainer>
 
