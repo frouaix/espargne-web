@@ -42,9 +42,6 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
                        (year.pension || year.income_pension || 0) + 
                        (year.other_income || year.income_other || 0),
       'Social Security': year.social_security || year.income_ssa || 0,
-      'Brokerage Withdrawal': year.taxable_withdrawal || year.income_taxable || 0,
-      'Traditional Withdrawal': year.traditional_withdrawal || year.income_traditional || 0,
-      'Roth Withdrawal': year.roth_withdrawal || year.income_roth || 0,
       'Taxes': year.taxes || 0,
     };
     
@@ -55,7 +52,22 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
       });
     }
     
+    // Add individual account withdrawals (prefixed to distinguish from balances)
+    if (year.account_withdrawals) {
+      Object.entries(year.account_withdrawals).forEach(([accountId, withdrawal]) => {
+        dataPoint[`withdrawal_${accountId}`] = withdrawal;
+      });
+    }
+    
     return dataPoint;
+  });
+  
+  // Get all unique withdrawal account IDs
+  const withdrawalAccountIds = new Set<string>();
+  chart_data.years_data.forEach(year => {
+    if (year.account_withdrawals) {
+      Object.keys(year.account_withdrawals).forEach(id => withdrawalAccountIds.add(id));
+    }
   });
 
   const formatChartCurrency = (value: number) => {
@@ -157,9 +169,15 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
           />
           <Tooltip formatter={(value: number) => formatChartCurrency(value)} />
           <Legend />
-          <Bar dataKey="Brokerage Withdrawal" stackId="withdrawals" fill="#8884d8" />
-          <Bar dataKey="Traditional Withdrawal" stackId="withdrawals" fill="#82ca9d" />
-          <Bar dataKey="Roth Withdrawal" stackId="withdrawals" fill="#ffc658" />
+          {Array.from(withdrawalAccountIds).map(accountId => (
+            <Bar 
+              key={accountId}
+              dataKey={`withdrawal_${accountId}`} 
+              name={accountId}
+              stackId="withdrawals" 
+              fill={accountColors[accountId] || '#999999'} 
+            />
+          ))}
           <Bar dataKey="Social Security" fill="#2196F3" />
           <Bar dataKey="Taxes" fill="#F44336" />
         </BarChart>

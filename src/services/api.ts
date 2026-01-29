@@ -22,6 +22,7 @@ export interface YearlyChartData {
   traditional_balance: number;
   roth_balance: number;
   account_balances?: Record<string, number>;
+  account_withdrawals?: Record<string, number>;
   
   // Legacy names (for backward compatibility)
   income_taxable?: number;
