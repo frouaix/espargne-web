@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 interface UserProfileFormProps {
   onSave: (data: UserProfileData) => void;
+  initialData?: UserProfileData | null;
 }
 
 export interface UserProfileData {
@@ -10,10 +11,10 @@ export interface UserProfileData {
   retirementAge: number;
 }
 
-export const UserProfileForm: React.FC<UserProfileFormProps> = ({ onSave }) => {
-  const [birthYear, setBirthYear] = useState('');
-  const [filingStatus, setFilingStatus] = useState<'single' | 'mfj' | 'hoh'>('single');
-  const [retirementAge, setRetirementAge] = useState('65');
+export const UserProfileForm: React.FC<UserProfileFormProps> = ({ onSave, initialData }) => {
+  const [birthYear, setBirthYear] = useState(initialData?.birthYear?.toString() || '');
+  const [filingStatus, setFilingStatus] = useState<'single' | 'mfj' | 'hoh'>(initialData?.filingStatus || 'single');
+  const [retirementAge, setRetirementAge] = useState(initialData?.retirementAge?.toString() || '65');
   const [error, setError] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {

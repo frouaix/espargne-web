@@ -268,7 +268,7 @@ function App(): ReactElement {
           <span className={`section-toggle ${collapsedSections['profile'] ? 'collapsed' : ''}`}>▼</span>
         </div>
         <div className={`section-content ${collapsedSections['profile'] ? 'collapsed' : ''}`}>
-          <UserProfileForm onSave={handleProfileSave} />
+          <UserProfileForm onSave={handleProfileSave} initialData={userProfile} />
           {userProfile && (() => {
             const { birthYear, filingStatus, retirementAge } = userProfile;
             return (
