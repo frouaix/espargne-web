@@ -205,6 +205,7 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
               <th>Age</th>
               <th className="align-right">Income</th>
               <th className="align-right">Taxes</th>
+              <th className="align-right">Net Income</th>
               <th className="align-right">Brokerage</th>
               <th className="align-right">Traditional</th>
               <th className="align-right">Roth</th>
@@ -217,6 +218,7 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
                                   (year.traditional_withdrawal || year.income_traditional || 0) + 
                                   (year.roth_withdrawal || year.income_roth || 0) + 
                                   (year.social_security || year.income_ssa || 0);
+              const netIncome = year.net_income || (totalIncome - (year.taxes || 0));
               const taxableBalance = year.taxable_balance || year.balance_taxable || 0;
               const traditionalBalance = year.traditional_balance || year.balance_traditional || 0;
               const rothBalance = year.roth_balance || year.balance_roth || 0;
@@ -231,6 +233,9 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
                   </td>
                   <td className="align-right">
                     ${formatCurrency(year.taxes || 0)}
+                  </td>
+                  <td className="align-right">
+                    ${formatCurrency(netIncome)}
                   </td>
                   <td className="align-right">
                     ${formatCurrency(taxableBalance)}
