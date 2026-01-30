@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { generateAccountId } from '../utils/ids';
 
 interface RothAccountFormProps {
   accountId?: string;
@@ -33,7 +34,7 @@ export const RothAccountForm: React.FC<RothAccountFormProps> = ({ accountId, onS
     }
 
     onSave({
-      accountId: accountId || `roth-${Date.now()}`,
+      accountId: accountId || generateAccountId('roth'),
       accountType: 'roth',
       nickname: nickname.trim(),
       balance: balanceNum,

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { generateAccountId } from '../utils/ids';
 
 interface TraditionalAccountFormProps {
   accountId?: string;
@@ -33,7 +34,7 @@ export const TraditionalAccountForm: React.FC<TraditionalAccountFormProps> = ({ 
     }
 
     onSave({
-      accountId: accountId || `traditional-${Date.now()}`,
+      accountId: accountId || generateAccountId('traditional'),
       accountType: 'traditional',
       nickname: nickname.trim(),
       balance: balanceNum,

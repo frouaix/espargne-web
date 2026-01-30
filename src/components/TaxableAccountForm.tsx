@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { generateAccountId } from '../utils/ids';
 
 interface TaxableAccountFormProps {
   accountId?: string;
@@ -42,7 +43,7 @@ export const TaxableAccountForm: React.FC<TaxableAccountFormProps> = ({ accountI
     }
 
     onSave({
-      accountId: accountId || `taxable-${Date.now()}`,
+      accountId: accountId || generateAccountId('taxable'),
       accountType: 'taxable',
       nickname: nickname.trim(),
       balance: balanceNum,

@@ -9,13 +9,23 @@ interface ProjectionChartProps {
 export function ProjectionChart({ result }: ProjectionChartProps) {
   const { chart_data, success, failure_year, failure_age, total_years } = result;
 
-  // Get all unique account IDs from the data
+  // Get all unique account IDs from both balances and withdrawals
   const accountIds = new Set<string>();
   chart_data.years_data.forEach(year => {
     if (year.account_balances) {
       Object.keys(year.account_balances).forEach(id => accountIds.add(id));
     }
+    if (year.account_withdrawals) {
+      Object.keys(year.account_withdrawals).forEach(id => accountIds.add(id));
+    }
   });
+  
+  // Sort account IDs for consistent ordering
+  const sortedAccountIds = Array.from(accountIds).sort();
+  
+  // Debug: log account data
+  console.log('Chart Data - First Year:', chart_data.years_data[0]);
+  console.log('Sorted Account IDs:', sortedAccountIds);
   
   // Generate colors for each account
   const colorPalette = [
@@ -25,9 +35,11 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
   ];
   
   const accountColors: Record<string, string> = {};
-  Array.from(accountIds).forEach((id, idx) => {
+  sortedAccountIds.forEach((id, idx) => {
     accountColors[id] = colorPalette[idx % colorPalette.length];
   });
+  
+  console.log('Account Colors:', accountColors);
 
   // Prepare data for visualization
   const chartData = chart_data.years_data.map(year => {
@@ -62,13 +74,14 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
     return dataPoint;
   });
   
-  // Get all unique withdrawal account IDs
+  // Get all unique withdrawal account IDs (sorted for consistency)
   const withdrawalAccountIds = new Set<string>();
   chart_data.years_data.forEach(year => {
     if (year.account_withdrawals) {
       Object.keys(year.account_withdrawals).forEach(id => withdrawalAccountIds.add(id));
     }
   });
+  const sortedWithdrawalAccountIds = Array.from(withdrawalAccountIds).sort();
 
   const formatChartCurrency = (value: number) => {
     if (value >= 1000000) {
@@ -118,7 +131,7 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
           />
           <Tooltip formatter={(value: number) => formatChartCurrency(value)} />
           <Legend />
-          {Array.from(accountIds).map(accountId => (
+          {sortedAccountIds.map(accountId => (
             <Area 
               key={accountId}
               type="monotone" 
@@ -169,7 +182,7 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
           />
           <Tooltip formatter={(value: number) => formatChartCurrency(value)} />
           <Legend />
-          {Array.from(withdrawalAccountIds).map(accountId => (
+          {sortedWithdrawalAccountIds.map(accountId => (
             <Bar 
               key={accountId}
               dataKey={`withdrawal_${accountId}`} 

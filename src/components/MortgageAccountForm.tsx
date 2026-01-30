@@ -1,4 +1,5 @@
 import { useState, type ReactElement } from 'react';
+import { generateAccountId } from '../utils/ids';
 
 export interface MortgageAccountData {
   accountId: string,
@@ -31,7 +32,7 @@ export const MortgageAccountForm = ({ onSave }: MortgageAccountFormProps): React
     }
 
     const accountData: MortgageAccountData = {
-      accountId: `mortgage-${Date.now()}`,
+      accountId: generateAccountId('mortgage'),
       accountType: 'mortgage',
       propertyNickname: propertyNickname.trim(),
       principalBalance: balance,

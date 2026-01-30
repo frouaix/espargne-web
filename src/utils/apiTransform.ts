@@ -30,7 +30,7 @@ export interface APIScenario {
   policy: {
     target_net_income?: string | null;
     withdrawal_rate?: string | null;
-    sequencing_strategy: 'taxable_first' | 'tax_deferred_first' | 'tax_bracket_optimization' | 'proportional';
+    sequencing_strategy: 'taxable_first' | 'taxable_first_min_taxes' | 'taxable_first_proportional' | 'tax_deferred_first' | 'tax_bracket_optimization' | 'proportional';
     target_tax_bracket?: string | null;
     avoid_irmaa: boolean;
     inflation_adjust: boolean;
@@ -73,7 +73,8 @@ function convertFilingStatus(status: string): 'single' | 'mfj' | 'mfs' | 'hoh' {
  * Convert frontend account to backend format
  */
 function convertAccount(account: Account, index: number) {
-  const accountId = `account_${account.accountType}_${index}`;
+  // Use the account's existing ID instead of generating a new one
+  const accountId = account.accountId;
   
   const baseAccount: {
     account_id: string;
@@ -90,11 +91,6 @@ function convertAccount(account: Account, index: number) {
   // Add cost basis for taxable accounts
   if (account.accountType === 'taxable' && 'costBasis' in account) {
     baseAccount.cost_basis = account.costBasis.toString();
-    console.log('DEBUG: Taxable account cost basis:', {
-      balance: account.balance,
-      costBasis: account.costBasis,
-      sent: baseAccount.cost_basis
-    });
   } else {
     baseAccount.cost_basis = null;
   }
@@ -111,15 +107,15 @@ function convertAccount(account: Account, index: number) {
  * Convert withdrawal strategy to backend format
  */
 function convertWithdrawalStrategy(
-  strategy: 'taxable_first' | 'traditional_first' | 'roth_first' | 'pro_rata'
-): 'taxable_first' | 'tax_deferred_first' | 'tax_bracket_optimization' | 'proportional' {
-  const strategyMap: Record<string, 'taxable_first' | 'tax_deferred_first' | 'tax_bracket_optimization' | 'proportional'> = {
-    'taxable_first': 'taxable_first',
+  strategy: 'taxable_first_min_taxes' | 'taxable_first_proportional' | 'traditional_first' | 'pro_rata'
+): 'taxable_first_min_taxes' | 'taxable_first_proportional' | 'tax_deferred_first' | 'proportional' {
+  const strategyMap: Record<string, 'taxable_first_min_taxes' | 'taxable_first_proportional' | 'tax_deferred_first' | 'proportional'> = {
+    'taxable_first_min_taxes': 'taxable_first_min_taxes',
+    'taxable_first_proportional': 'taxable_first_proportional',
     'traditional_first': 'tax_deferred_first',
-    'roth_first': 'tax_deferred_first',
     'pro_rata': 'proportional',
   };
-  return strategyMap[strategy] || 'taxable_first';
+  return strategyMap[strategy] || 'taxable_first_min_taxes';
 }
 
 /**
@@ -131,7 +127,7 @@ export function transformToAPIScenario(
   ssaIncome: SSAIncomeData | null,
   scenarioName: string = 'Retirement Scenario',
   withdrawalRate: number = 0.04,
-  withdrawalStrategy: 'taxable_first' | 'traditional_first' | 'roth_first' | 'pro_rata' = 'taxable_first'
+  withdrawalStrategy: 'taxable_first_min_taxes' | 'taxable_first_proportional' | 'traditional_first' | 'pro_rata' = 'taxable_first_min_taxes'
 ): APIScenario {
   const currentYear = new Date().getFullYear();
   const birthYear = currentYear - userProfile.currentAge;
@@ -194,7 +190,7 @@ export function createProjectionRequest(
   options: {
     scenarioName?: string;
     withdrawalRate?: number;
-    withdrawalStrategy?: 'taxable_first' | 'traditional_first' | 'roth_first' | 'pro_rata';
+    withdrawalStrategy?: 'taxable_first_min_taxes' | 'taxable_first_proportional' | 'traditional_first' | 'pro_rata';
     maxYears?: number;
     realReturn?: number;
   } = {}

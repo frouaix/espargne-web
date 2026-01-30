@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { UserProfileData } from './UserProfileForm';
 import type { SSAIncomeData } from './SSAIncomeForm';
 import type { Account } from '../utils/export';
@@ -19,7 +19,7 @@ export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRun
   const [maxYears, setMaxYears] = useState(30);
   const [realReturn, setRealReturn] = useState(0.05);
   const [withdrawalRate, setWithdrawalRate] = useState(0.04);
-  const [withdrawalStrategy, setWithdrawalStrategy] = useState<'taxable_first' | 'traditional_first' | 'roth_first' | 'pro_rata'>('taxable_first');
+  const [withdrawalStrategy, setWithdrawalStrategy] = useState<'taxable_first_min_taxes' | 'taxable_first_proportional' | 'traditional_first' | 'pro_rata'>('taxable_first_min_taxes');
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
@@ -32,7 +32,10 @@ export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRun
   );
 
   const totalBalance = supportedAccounts.reduce((sum, acc) => sum + acc.balance, 0);
-
+  
+  // Track if this is the first render
+  const isFirstRender = useRef(true);
+  
   const handleRunProjection = async () => {
     setLoading(true);
     setError('');
@@ -57,6 +60,33 @@ export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRun
       setLoading(false);
     }
   };
+
+  // Auto-run projection when inputs change (after initial render)
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    
+    // Only auto-run if we have the minimum required data
+    if (supportedAccounts.length > 0 && userProfile) {
+      handleRunProjection();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    maxYears, 
+    realReturn, 
+    withdrawalRate, 
+    withdrawalStrategy,
+    // Also trigger on account/profile changes
+    accounts.length,
+    totalBalance,
+    userProfile.birthYear,
+    userProfile.retirementAge,
+    userProfile.filingStatus,
+    ssaIncome?.fraMonthlyBenefit,
+    ssaIncome?.claimingAge
+  ]);
 
   const handleDownloadCSV = async () => {
     setLoading(true);
@@ -146,9 +176,9 @@ export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRun
         <label>
           Withdrawal Strategy:
           <select value={withdrawalStrategy} onChange={(e) => setWithdrawalStrategy(e.target.value as any)}>
-            <option value="taxable_first">Taxable First</option>
+            <option value="taxable_first_min_taxes">Taxable First (Minimum Taxes)</option>
+            <option value="taxable_first_proportional">Taxable First (Proportional)</option>
             <option value="traditional_first">Traditional First</option>
-            <option value="roth_first">Roth First</option>
             <option value="pro_rata">Pro Rata</option>
           </select>
         </label>

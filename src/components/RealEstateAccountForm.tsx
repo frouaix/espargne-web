@@ -1,4 +1,5 @@
 import { useState, type ReactElement } from 'react';
+import { generateAccountId } from '../utils/ids';
 
 export interface RealEstateAccountData {
   accountId: string,
@@ -28,7 +29,7 @@ export const RealEstateAccountForm = ({ onSave }: RealEstateAccountFormProps): R
     }
 
     const accountData: RealEstateAccountData = {
-      accountId: `real-estate-${Date.now()}`,
+      accountId: generateAccountId('real-estate'),
       accountType: 'realEstate',
       nickname: nickname.trim(),
       currentValue: value,
