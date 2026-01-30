@@ -45,8 +45,37 @@ function App(): ReactElement {
   const [showRealEstateForm, setShowRealEstateForm] = useState(false);
   const [showMortgageForm, setShowMortgageForm] = useState(false);
   
-  const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
-  const [collapsedCards, setCollapsedCards] = useState<Record<string, boolean>>({});
+  // Initialize collapsed state based on whether accounts exist
+  const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>(() => {
+    // Start collapsed if there are accounts in localStorage
+    const saved = localStorage.getItem(STORAGE_KEYS.ACCOUNTS);
+    const savedAccounts = saved ? JSON.parse(saved) : [];
+    if (savedAccounts.length > 0) {
+      return {
+        'profile': true,
+        'retirement': true,
+        'taxable': true,
+        'ssa': true,
+        'liabilities': true,
+        'summary': false  // Keep summary expanded
+      };
+    }
+    return {};
+  });
+  
+  const [collapsedCards, setCollapsedCards] = useState<Record<string, boolean>>(() => {
+    // Start with all cards collapsed if there are accounts
+    const saved = localStorage.getItem(STORAGE_KEYS.ACCOUNTS);
+    const savedAccounts = saved ? JSON.parse(saved) : [];
+    if (savedAccounts.length > 0) {
+      const collapsed: Record<string, boolean> = {};
+      savedAccounts.forEach((acc: any) => {
+        collapsed[acc.accountId] = true;
+      });
+      return collapsed;
+    }
+    return {};
+  });
   
   useEffect(() => {
     if (userProfile) {
