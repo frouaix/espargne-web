@@ -8,6 +8,7 @@ import { runProjection, downloadProjectionCSV, getProjectionExplanation } from '
 import type { ProjectionResponse, ExplanationResponse } from '../services/api';
 import { ProjectionChart } from './ProjectionChart';
 import { ExplanationView } from './ExplanationView';
+import { STORAGE_KEYS } from '../utils/storage';
 
 interface ScenarioRunnerProps {
   userProfile: UserProfileData;
@@ -19,7 +20,10 @@ export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRun
   const [maxYears, setMaxYears] = useState(30);
   const [realReturn, setRealReturn] = useState(0.05);
   const [withdrawalRate, setWithdrawalRate] = useState(0.04);
-  const [withdrawalStrategy, setWithdrawalStrategy] = useState<'taxable_first_min_taxes' | 'taxable_first_proportional' | 'traditional_first' | 'pro_rata'>('taxable_first_min_taxes');
+  const [withdrawalStrategy, setWithdrawalStrategy] = useState<'taxable_first_min_taxes' | 'taxable_first_proportional' | 'traditional_first' | 'pro_rata'>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.WITHDRAWAL_STRATEGY);
+    return (saved as any) || 'taxable_first_min_taxes';
+  });
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
@@ -60,6 +64,11 @@ export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRun
       setLoading(false);
     }
   };
+
+  // Save withdrawal strategy to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.WITHDRAWAL_STRATEGY, withdrawalStrategy);
+  }, [withdrawalStrategy]);
 
   // Auto-run projection when inputs change (after initial render)
   useEffect(() => {
