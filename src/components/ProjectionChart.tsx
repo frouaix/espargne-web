@@ -23,6 +23,17 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
   // Sort account IDs for consistent ordering
   const sortedAccountIds = Array.from(accountIds).sort();
   
+  // Check which account types have non-zero balances
+  const hasAnyTaxable = chart_data.years_data.some(year => 
+    (year.taxable_balance || year.balance_taxable || 0) > 0
+  );
+  const hasAnyTraditional = chart_data.years_data.some(year => 
+    (year.traditional_balance || year.balance_traditional || 0) > 0
+  );
+  const hasAnyRoth = chart_data.years_data.some(year => 
+    (year.roth_balance || year.balance_roth || 0) > 0
+  );
+  
   // Debug: log account data
   console.log('Chart Data - First Year:', chart_data.years_data[0]);
   console.log('Sorted Account IDs:', sortedAccountIds);
@@ -210,9 +221,9 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
               <th className="align-right">Taxes</th>
               <th className="align-right">Tax Rate</th>
               <th className="align-right">Net Income</th>
-              <th className="align-right">Brokerage</th>
-              <th className="align-right">Traditional</th>
-              <th className="align-right">Roth</th>
+              {hasAnyTaxable && <th className="align-right">Brokerage</th>}
+              {hasAnyTraditional && <th className="align-right">Traditional</th>}
+              {hasAnyRoth && <th className="align-right">Roth</th>}
               <th className="align-right">Total</th>
             </tr>
           </thead>
@@ -246,15 +257,21 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
                   <td className="align-right">
                     ${formatCurrency(netIncome)}
                   </td>
-                  <td className="align-right">
-                    ${formatCurrency(taxableBalance)}
-                  </td>
-                  <td className="align-right">
-                    ${formatCurrency(traditionalBalance)}
-                  </td>
-                  <td className="align-right">
-                    ${formatCurrency(rothBalance)}
-                  </td>
+                  {hasAnyTaxable && (
+                    <td className="align-right">
+                      ${formatCurrency(taxableBalance)}
+                    </td>
+                  )}
+                  {hasAnyTraditional && (
+                    <td className="align-right">
+                      ${formatCurrency(traditionalBalance)}
+                    </td>
+                  )}
+                  {hasAnyRoth && (
+                    <td className="align-right">
+                      ${formatCurrency(rothBalance)}
+                    </td>
+                  )}
                   <td className="align-right bold">
                     ${formatCurrency(totalBalance)}
                   </td>
