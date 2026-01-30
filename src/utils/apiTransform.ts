@@ -95,9 +95,17 @@ function convertAccount(account: Account, index: number) {
     baseAccount.cost_basis = null;
   }
 
-  // Add metadata with nickname if available
+  // Add metadata with nickname and dividend yield
   if ('nickname' in account && account.nickname) {
     baseAccount.metadata = { nickname: account.nickname };
+  }
+  
+  // Add dividend yield for taxable accounts
+  if (account.accountType === 'taxable' && 'dividendYield' in account) {
+    baseAccount.metadata = {
+      ...(baseAccount.metadata || {}),
+      dividend_yield: account.dividendYield / 100, // Convert percentage to decimal
+    };
   }
 
   return baseAccount;

@@ -3,6 +3,7 @@ import { generateAccountId } from '../utils/ids';
 
 interface TraditionalAccountFormProps {
   accountId?: string;
+  initialData?: TraditionalAccountData;
   onSave: (data: TraditionalAccountData) => void;
 }
 
@@ -13,9 +14,9 @@ export interface TraditionalAccountData {
   balance: number;
 }
 
-export const TraditionalAccountForm: React.FC<TraditionalAccountFormProps> = ({ accountId, onSave }) => {
-  const [nickname, setNickname] = useState('');
-  const [balance, setBalance] = useState('');
+export const TraditionalAccountForm: React.FC<TraditionalAccountFormProps> = ({ accountId, initialData, onSave }) => {
+  const [nickname, setNickname] = useState(initialData?.nickname || '');
+  const [balance, setBalance] = useState(initialData?.balance?.toString() || '');
   const [error, setError] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -34,14 +35,17 @@ export const TraditionalAccountForm: React.FC<TraditionalAccountFormProps> = ({ 
     }
 
     onSave({
-      accountId: accountId || generateAccountId('traditional'),
+      accountId: accountId || initialData?.accountId || generateAccountId('traditional'),
       accountType: 'traditional',
       nickname: nickname.trim(),
       balance: balanceNum,
     });
     
-    setNickname('');
-    setBalance('');
+    // Only clear form if not editing
+    if (!initialData) {
+      setNickname('');
+      setBalance('');
+    }
   };
 
   return (

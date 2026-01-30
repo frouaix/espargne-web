@@ -51,9 +51,11 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
                        (year.traditional_withdrawal || year.income_traditional || 0) + 
                        (year.roth_withdrawal || year.income_roth || 0) + 
                        (year.social_security || year.income_ssa || 0) + 
+                       (year.dividend_income || 0) +
                        (year.pension || year.income_pension || 0) + 
                        (year.other_income || year.income_other || 0),
       'Social Security': year.social_security || year.income_ssa || 0,
+      'Dividends': year.dividend_income || 0,
       'Taxes': year.taxes || 0,
     };
     
@@ -191,6 +193,7 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
               fill={accountColors[accountId] || '#999999'} 
             />
           ))}
+          <Bar dataKey="Dividends" stackId="income" fill="#4CAF50" />
           <Bar dataKey="Social Security" stackId="income" fill="#2196F3" />
           <Bar dataKey="Taxes" fill="#F44336" />
         </BarChart>
@@ -217,7 +220,8 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
               const totalIncome = (year.taxable_withdrawal || year.income_taxable || 0) + 
                                   (year.traditional_withdrawal || year.income_traditional || 0) + 
                                   (year.roth_withdrawal || year.income_roth || 0) + 
-                                  (year.social_security || year.income_ssa || 0);
+                                  (year.social_security || year.income_ssa || 0) +
+                                  (year.dividend_income || 0);
               const netIncome = year.net_income || (totalIncome - (year.taxes || 0));
               const taxableBalance = year.taxable_balance || year.balance_taxable || 0;
               const traditionalBalance = year.traditional_balance || year.balance_traditional || 0;

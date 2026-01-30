@@ -3,6 +3,7 @@ import { generateAccountId } from '../utils/ids';
 
 interface RothAccountFormProps {
   accountId?: string;
+  initialData?: RothAccountData;
   onSave: (data: RothAccountData) => void;
 }
 
@@ -13,9 +14,9 @@ export interface RothAccountData {
   balance: number;
 }
 
-export const RothAccountForm: React.FC<RothAccountFormProps> = ({ accountId, onSave }) => {
-  const [nickname, setNickname] = useState('');
-  const [balance, setBalance] = useState('');
+export const RothAccountForm: React.FC<RothAccountFormProps> = ({ accountId, initialData, onSave }) => {
+  const [nickname, setNickname] = useState(initialData?.nickname || '');
+  const [balance, setBalance] = useState(initialData?.balance?.toString() || '');
   const [error, setError] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -34,14 +35,17 @@ export const RothAccountForm: React.FC<RothAccountFormProps> = ({ accountId, onS
     }
 
     onSave({
-      accountId: accountId || generateAccountId('roth'),
+      accountId: accountId || initialData?.accountId || generateAccountId('roth'),
       accountType: 'roth',
       nickname: nickname.trim(),
       balance: balanceNum,
     });
     
-    setNickname('');
-    setBalance('');
+    // Only clear form if not editing
+    if (!initialData) {
+      setNickname('');
+      setBalance('');
+    }
   };
 
   return (

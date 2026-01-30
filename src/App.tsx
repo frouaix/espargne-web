@@ -44,6 +44,7 @@ function App(): ReactElement {
   const [showTaxableForm, setShowTaxableForm] = useState(false);
   const [showRealEstateForm, setShowRealEstateForm] = useState(false);
   const [showMortgageForm, setShowMortgageForm] = useState(false);
+  const [editingAccount, setEditingAccount] = useState<Account | null>(null);
   
   // Initialize collapsed state based on whether accounts exist
   const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>(() => {
@@ -184,12 +185,43 @@ function App(): ReactElement {
 
   const handleAccountSave = (data: Account): void => {
     const { accountType } = data;
-    setAccounts([...accounts, data]);
+    
+    if (editingAccount) {
+      // Update existing account
+      setAccounts(accounts.map(acc => 
+        acc.accountId === editingAccount.accountId ? data : acc
+      ));
+      setEditingAccount(null);
+    } else {
+      // Add new account
+      setAccounts([...accounts, data]);
+    }
+    
+    // Close forms
     if (accountType === 'roth') setShowRothForm(false);
     if (accountType === 'traditional') setShowTraditionalForm(false);
     if (accountType === 'taxable') setShowTaxableForm(false);
     if (accountType === 'realEstate') setShowRealEstateForm(false);
     if (accountType === 'mortgage') setShowMortgageForm(false);
+  };
+
+  const handleAccountEdit = (account: Account): void => {
+    setEditingAccount(account);
+    // Show the appropriate form
+    if (account.accountType === 'roth') setShowRothForm(true);
+    if (account.accountType === 'traditional') setShowTraditionalForm(true);
+    if (account.accountType === 'taxable') setShowTaxableForm(true);
+    if (account.accountType === 'realEstate') setShowRealEstateForm(true);
+    if (account.accountType === 'mortgage') setShowMortgageForm(true);
+    
+    // Expand the section if collapsed
+    if (account.accountType === 'roth' || account.accountType === 'traditional') {
+      setCollapsedSections(prev => ({ ...prev, retirement: false }));
+    } else if (account.accountType === 'taxable') {
+      setCollapsedSections(prev => ({ ...prev, taxable: false }));
+    } else if (account.accountType === 'realEstate' || account.accountType === 'mortgage') {
+      setCollapsedSections(prev => ({ ...prev, liabilities: false }));
+    }
   };
 
   const handleAccountRemove = (accountId: string): void => {
@@ -346,6 +378,7 @@ function App(): ReactElement {
                       </div>
                     </div>
                     <div className="account-card-actions">
+                      <button onClick={(e) => { e.stopPropagation(); handleAccountEdit(acc); }} className="btn-edit">Edit</button>
                       <button onClick={(e) => { e.stopPropagation(); handleAccountRemove(accountId); }} className="btn-remove">Remove</button>
                     </div>
                   </div>
@@ -354,9 +387,12 @@ function App(): ReactElement {
             })}
           </div>
           {showRothForm ? (
-            <RothAccountForm onSave={handleAccountSave} />
+            <RothAccountForm 
+              onSave={handleAccountSave} 
+              initialData={editingAccount?.accountType === 'roth' ? editingAccount as any : undefined}
+            />
           ) : (
-            <button onClick={() => setShowRothForm(true)} className="btn btn-primary">+ Add Roth Account</button>
+            <button onClick={() => { setEditingAccount(null); setShowRothForm(true); }} className="btn btn-primary">+ Add Roth Account</button>
           )}
         </div>
 
@@ -384,6 +420,7 @@ function App(): ReactElement {
                       </div>
                     </div>
                     <div className="account-card-actions">
+                      <button onClick={(e) => { e.stopPropagation(); handleAccountEdit(acc); }} className="btn-edit">Edit</button>
                       <button onClick={(e) => { e.stopPropagation(); handleAccountRemove(accountId); }} className="btn-remove">Remove</button>
                     </div>
                   </div>
@@ -392,9 +429,12 @@ function App(): ReactElement {
             })}
           </div>
           {showTraditionalForm ? (
-            <TraditionalAccountForm onSave={handleAccountSave} />
+            <TraditionalAccountForm 
+              onSave={handleAccountSave} 
+              initialData={editingAccount?.accountType === 'traditional' ? editingAccount as any : undefined}
+            />
           ) : (
-            <button onClick={() => setShowTraditionalForm(true)} className="btn btn-secondary">+ Add Traditional Account</button>
+            <button onClick={() => { setEditingAccount(null); setShowTraditionalForm(true); }} className="btn btn-secondary">+ Add Traditional Account</button>
           )}
         </div>
         </div>
@@ -416,7 +456,7 @@ function App(): ReactElement {
           <div className="accounts-grid">
             {taxableAccounts.map((acc) => {
               if (acc.accountType !== 'taxable') return null;
-              const { accountId, balance, costBasis, nickname } = acc;
+              const { accountId, balance, costBasis, nickname, dividendYield } = acc;
               const isCollapsed = collapsedCards[accountId];
               const gains = balance - costBasis;
               return (
@@ -424,7 +464,12 @@ function App(): ReactElement {
                   <div className="account-card-header" onClick={() => toggleCard(accountId)}>
                     <div className="account-card-summary">
                       <div className="account-card-balance">${formatCurrency(balance)}</div>
-                      {isCollapsed && <span className="account-card-type-label">{nickname}</span>}
+                      {isCollapsed && (
+                        <>
+                          <span className="account-card-type-label">{nickname}</span>
+                          {dividendYield > 0 && <span className="account-card-dividend">Div: {dividendYield}%</span>}
+                        </>
+                      )}
                     </div>
                     <span className={`account-card-toggle ${isCollapsed ? 'collapsed' : ''}`}>▼</span>
                   </div>
@@ -434,9 +479,11 @@ function App(): ReactElement {
                         {nickname && <div><strong>{nickname}</strong></div>}
                         <div>Cost Basis: ${formatCurrency(costBasis)}</div>
                         <div>Gains: ${formatCurrency(gains)}</div>
+                        {dividendYield > 0 && <div>Dividend Yield: {dividendYield}%</div>}
                       </div>
                     </div>
                     <div className="account-card-actions">
+                      <button onClick={(e) => { e.stopPropagation(); handleAccountEdit(acc); }} className="btn-edit">Edit</button>
                       <button onClick={(e) => { e.stopPropagation(); handleAccountRemove(accountId); }} className="btn-remove">Remove</button>
                     </div>
                   </div>
@@ -445,9 +492,12 @@ function App(): ReactElement {
             })}
           </div>
           {showTaxableForm ? (
-            <TaxableAccountForm onSave={handleAccountSave} />
+            <TaxableAccountForm 
+              onSave={handleAccountSave} 
+              initialData={editingAccount?.accountType === 'taxable' ? editingAccount as any : undefined}
+            />
           ) : (
-            <button onClick={() => setShowTaxableForm(true)} className="btn btn-tertiary">+ Add Taxable Account</button>
+            <button onClick={() => { setEditingAccount(null); setShowTaxableForm(true); }} className="btn btn-tertiary">+ Add Taxable Account</button>
           )}
         </div>
 
