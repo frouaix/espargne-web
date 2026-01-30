@@ -169,11 +169,11 @@ export function transformToAPIScenario(
   };
 
   // Add SSA income if available
-  if (ssaIncome && ssaIncome.monthlyBenefit > 0) {
+  if (ssaIncome && ssaIncome.fraMonthlyBenefit > 0) {
     apiScenario.income_sources.push({
       source_type: 'ssa',
-      start_age: ssaIncome.startAge || 67,
-      monthly_amount: ssaIncome.monthlyBenefit,
+      start_age: ssaIncome.claimingAge || 67,
+      monthly_amount: ssaIncome.fraMonthlyBenefit,
     });
   }
 

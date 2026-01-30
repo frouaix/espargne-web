@@ -187,11 +187,11 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
               key={accountId}
               dataKey={`withdrawal_${accountId}`} 
               name={accountId}
-              stackId="withdrawals" 
+              stackId="income" 
               fill={accountColors[accountId] || '#999999'} 
             />
           ))}
-          <Bar dataKey="Social Security" fill="#2196F3" />
+          <Bar dataKey="Social Security" stackId="income" fill="#2196F3" />
           <Bar dataKey="Taxes" fill="#F44336" />
         </BarChart>
       </ResponsiveContainer>
