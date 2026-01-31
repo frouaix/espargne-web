@@ -182,6 +182,9 @@ export function transformToAPIScenario(
       source_type: 'ssa',
       start_age: ssaIncome.claimingAge || 67,
       monthly_amount: ssaIncome.fraMonthlyBenefit,
+      metadata: {
+        cola_rate: (ssaIncome.colaRate || 2.5) / 100, // Convert percentage to decimal
+      },
     });
   }
 

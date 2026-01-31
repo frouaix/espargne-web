@@ -8,11 +8,13 @@ interface SSAIncomeFormProps {
 export interface SSAIncomeData {
   fraMonthlyBenefit: number;
   claimingAge: number;
+  colaRate?: number;
 }
 
 export const SSAIncomeForm: React.FC<SSAIncomeFormProps> = ({ onSave, initialData }) => {
   const [fraMonthlyBenefit, setFraMonthlyBenefit] = useState(initialData?.fraMonthlyBenefit?.toString() || '');
   const [claimingAge, setClaimingAge] = useState(initialData?.claimingAge?.toString() || '67');
+  const [colaRate, setColaRate] = useState(initialData?.colaRate?.toString() || '2.5');
   const [error, setError] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -26,8 +28,9 @@ export const SSAIncomeForm: React.FC<SSAIncomeFormProps> = ({ onSave, initialDat
 
     const benefit = parseFloat(fraMonthlyBenefit);
     const age = parseFloat(claimingAge);
+    const cola = parseFloat(colaRate);
 
-    if (isNaN(benefit) || isNaN(age)) {
+    if (isNaN(benefit) || isNaN(age) || isNaN(cola)) {
       setError('Please enter valid numbers');
       return;
     }
@@ -37,9 +40,15 @@ export const SSAIncomeForm: React.FC<SSAIncomeFormProps> = ({ onSave, initialDat
       return;
     }
 
+    if (cola < 0 || cola > 10) {
+      setError('COLA rate must be between 0% and 10%');
+      return;
+    }
+
     onSave({
       fraMonthlyBenefit: benefit,
       claimingAge: age,
+      colaRate: cola,
     });
   };
 
@@ -73,6 +82,20 @@ export const SSAIncomeForm: React.FC<SSAIncomeFormProps> = ({ onSave, initialDat
           onChange={(e) => setClaimingAge(e.target.value)}
         />
         <small>Ages 62–70; claiming early reduces benefits, delaying increases them</small>
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="colaRate">Annual COLA Rate (%)</label>
+        <input
+          id="colaRate"
+          type="number"
+          min="0"
+          max="10"
+          step="0.1"
+          value={colaRate}
+          onChange={(e) => setColaRate(e.target.value)}
+        />
+        <small>Cost of Living Adjustment (historical average ~2.5%)</small>
       </div>
 
       {error && <div className="error-message">{error}</div>}
