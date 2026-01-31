@@ -5,4 +5,5 @@ export const STORAGE_KEYS = {
   WITHDRAWAL_STRATEGY: 'retirement-calc-withdrawal-strategy',
   MIN_REQUIRED_INCOME: 'retirement-calc-min-required-income',
   MIN_INCOME_INFLATION_RATE: 'retirement-calc-min-income-inflation-rate',
+  MAX_YEARS: 'retirement-calc-max-years',
 } as const;

@@ -17,7 +17,10 @@ interface ScenarioRunnerProps {
 }
 
 export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRunnerProps) {
-  const [maxYears, setMaxYears] = useState(30);
+  const [maxYears, setMaxYears] = useState(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.MAX_YEARS);
+    return saved ? parseInt(saved, 10) : 30;
+  });
   const [realReturn, setRealReturn] = useState(0.05);
   const [withdrawalRate, setWithdrawalRate] = useState(0.04);
   const [minRequiredIncome, setMinRequiredIncome] = useState(() => {
@@ -79,6 +82,11 @@ export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRun
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.WITHDRAWAL_STRATEGY, withdrawalStrategy);
   }, [withdrawalStrategy]);
+
+  // Save max years to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.MAX_YEARS, maxYears.toString());
+  }, [maxYears]);
 
   // Save min required income settings to localStorage
   useEffect(() => {
