@@ -33,6 +33,12 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
   const hasAnyRoth = chart_data.years_data.some(year => 
     (year.roth_balance || year.balance_roth || 0) > 0
   );
+  const hasAnySocialSecurity = chart_data.years_data.some(year =>
+    (year.social_security || year.income_ssa || 0) > 0
+  );
+  const hasAnyDividends = chart_data.years_data.some(year =>
+    (year.dividend_income || 0) > 0
+  );
   
   // Debug: log account data
   console.log('Chart Data - First Year:', chart_data.years_data[0]);
@@ -218,6 +224,8 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
               <th>Year</th>
               <th>Age</th>
               <th className="align-right">Income</th>
+              {hasAnySocialSecurity && <th className="align-right">Social Security</th>}
+              {hasAnyDividends && <th className="align-right">Dividends</th>}
               <th className="align-right">Taxes</th>
               <th className="align-right">Tax Rate</th>
               <th className="align-right">Net Income</th>
@@ -241,6 +249,9 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
               const rothBalance = year.roth_balance || year.balance_roth || 0;
               const totalBalance = year.total_portfolio_value || year.total_balance || 0;
               
+              const socialSecurityIncome = year.social_security || year.income_ssa || 0;
+              const dividendIncome = year.dividend_income || 0;
+              
               return (
                 <tr key={idx}>
                   <td>{year.year}</td>
@@ -248,6 +259,16 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
                   <td className="align-right">
                     ${formatCurrency(totalIncome)}
                   </td>
+                  {hasAnySocialSecurity && (
+                    <td className="align-right">
+                      ${formatCurrency(socialSecurityIncome)}
+                    </td>
+                  )}
+                  {hasAnyDividends && (
+                    <td className="align-right">
+                      ${formatCurrency(dividendIncome)}
+                    </td>
+                  )}
                   <td className="align-right">
                     ${formatCurrency(year.taxes || 0)}
                   </td>
