@@ -43,50 +43,49 @@ export const RealEstateAccountForm = ({ onSave }: RealEstateAccountFormProps): R
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginBottom: '10px', padding: '15px', border: '1px solid #ddd', borderRadius: '4px' }}>
-      <div style={{ marginBottom: '10px' }}>
-        <label>
-          Property Nickname:
-          <input
-            type="text"
-            value={nickname}
-            onChange={(e): void => setNickname(e.target.value)}
-            placeholder="e.g., Main Street Rental"
-            required
-            style={{ marginLeft: '10px', padding: '5px' }}
-          />
-        </label>
+    <form onSubmit={handleSubmit} className="account-form">
+      <h3>Real Estate</h3>
+      
+      <div className="form-group">
+        <label htmlFor="nickname">Property Nickname</label>
+        <input
+          id="nickname"
+          type="text"
+          value={nickname}
+          onChange={(e): void => setNickname(e.target.value)}
+          placeholder="e.g., Main Street Rental"
+          required
+        />
       </div>
-      <div style={{ marginBottom: '10px' }}>
-        <label>
-          Current Value ($):
-          <input
-            type="number"
-            value={currentValue}
-            onChange={(e): void => setCurrentValue(e.target.value)}
-            placeholder="e.g., 500000"
-            min="0"
-            step="1000"
-            required
-            style={{ marginLeft: '10px', padding: '5px' }}
-          />
-        </label>
+
+      <div className="form-group">
+        <label htmlFor="currentValue">Current Value ($)</label>
+        <input
+          id="currentValue"
+          type="number"
+          value={currentValue}
+          onChange={(e): void => setCurrentValue(e.target.value)}
+          placeholder="e.g., 500000"
+          min="0"
+          step="1000"
+          required
+        />
       </div>
-      <div style={{ marginBottom: '10px' }}>
-        <label>
-          Expected Yearly Value Increase (%):
-          <input
-            type="number"
-            value={yearlyValueIncrease}
-            onChange={(e): void => setYearlyValueIncrease(e.target.value)}
-            placeholder="e.g., 3.5"
-            step="0.1"
-            required
-            style={{ marginLeft: '10px', padding: '5px' }}
-          />
-        </label>
+
+      <div className="form-group">
+        <label htmlFor="yearlyValueIncrease">Expected Yearly Value Increase (%)</label>
+        <input
+          id="yearlyValueIncrease"
+          type="number"
+          value={yearlyValueIncrease}
+          onChange={(e): void => setYearlyValueIncrease(e.target.value)}
+          placeholder="e.g., 3.5"
+          step="0.1"
+          required
+        />
       </div>
-      <button type="submit" style={{ padding: '8px 16px', background: '#9C27B0', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+
+      <button type="submit" className="btn-quaternary">
         Save Real Estate
       </button>
     </form>

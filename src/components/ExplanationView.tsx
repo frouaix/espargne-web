@@ -33,7 +33,7 @@ export function ExplanationView({ explanation }: ExplanationViewProps) {
 
       <div className="explanation-section explanation-summary">
         <h4>📋 Summary</h4>
-        <p style={{ whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>{sections.summary}</p>
+        <p className="explanation-summary-text">{sections.summary}</p>
       </div>
 
       <div className="explanation-section explanation-success">

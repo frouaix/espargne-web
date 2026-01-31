@@ -48,66 +48,64 @@ export const MortgageAccountForm = ({ onSave }: MortgageAccountFormProps): React
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginBottom: '10px', padding: '15px', border: '1px solid #ddd', borderRadius: '4px' }}>
-      <div style={{ marginBottom: '10px' }}>
-        <label>
-          Property Nickname:
-          <input
-            type="text"
-            value={propertyNickname}
-            onChange={(e): void => setPropertyNickname(e.target.value)}
-            placeholder="e.g., Main Street Rental"
-            required
-            style={{ marginLeft: '10px', padding: '5px' }}
-          />
-        </label>
+    <form onSubmit={handleSubmit} className="account-form">
+      <h3>Mortgage</h3>
+      
+      <div className="form-group">
+        <label htmlFor="propertyNickname">Property Nickname</label>
+        <input
+          id="propertyNickname"
+          type="text"
+          value={propertyNickname}
+          onChange={(e): void => setPropertyNickname(e.target.value)}
+          placeholder="e.g., Main Street Rental"
+          required
+        />
       </div>
-      <div style={{ marginBottom: '10px' }}>
-        <label>
-          Principal Balance ($):
-          <input
-            type="number"
-            value={principalBalance}
-            onChange={(e): void => setPrincipalBalance(e.target.value)}
-            placeholder="e.g., 350000"
-            min="0"
-            step="1000"
-            required
-            style={{ marginLeft: '10px', padding: '5px' }}
-          />
-        </label>
+
+      <div className="form-group">
+        <label htmlFor="principalBalance">Principal Balance ($)</label>
+        <input
+          id="principalBalance"
+          type="number"
+          value={principalBalance}
+          onChange={(e): void => setPrincipalBalance(e.target.value)}
+          placeholder="e.g., 350000"
+          min="0"
+          step="1000"
+          required
+        />
       </div>
-      <div style={{ marginBottom: '10px' }}>
-        <label>
-          Interest Rate (%):
-          <input
-            type="number"
-            value={interestRate}
-            onChange={(e): void => setInterestRate(e.target.value)}
-            placeholder="e.g., 3.5 or 1.875"
-            min="0"
-            step="0.001"
-            required
-            style={{ marginLeft: '10px', padding: '5px' }}
-          />
-        </label>
+
+      <div className="form-group">
+        <label htmlFor="interestRate">Interest Rate (%)</label>
+        <input
+          id="interestRate"
+          type="number"
+          value={interestRate}
+          onChange={(e): void => setInterestRate(e.target.value)}
+          placeholder="e.g., 3.5 or 1.875"
+          min="0"
+          step="0.001"
+          required
+        />
       </div>
-      <div style={{ marginBottom: '10px' }}>
-        <label>
-          Monthly Payment ($):
-          <input
-            type="number"
-            value={monthlyPayment}
-            onChange={(e): void => setMonthlyPayment(e.target.value)}
-            placeholder="e.g., 1500"
-            min="0"
-            step="0.01"
-            required
-            style={{ marginLeft: '10px', padding: '5px' }}
-          />
-        </label>
+
+      <div className="form-group">
+        <label htmlFor="monthlyPayment">Monthly Payment ($)</label>
+        <input
+          id="monthlyPayment"
+          type="number"
+          value={monthlyPayment}
+          onChange={(e): void => setMonthlyPayment(e.target.value)}
+          placeholder="e.g., 1500"
+          min="0"
+          step="0.01"
+          required
+        />
       </div>
-      <button type="submit" style={{ padding: '8px 16px', background: '#F44336', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+
+      <button type="submit" className="btn-liability">
         Save Mortgage
       </button>
     </form>
