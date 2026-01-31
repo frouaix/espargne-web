@@ -1,4 +1,4 @@
-import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, AreaChart, Area, BarChart, Bar, ComposedChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import type { ProjectionResult } from '../services/api';
 import { formatCurrency } from '../utils/format';
 
@@ -39,10 +39,9 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
   const hasAnyDividends = chart_data.years_data.some(year =>
     (year.dividend_income || 0) > 0
   );
-  
-  // Debug: log account data
-  console.log('Chart Data - First Year:', chart_data.years_data[0]);
-  console.log('Sorted Account IDs:', sortedAccountIds);
+  const hasMinRequiredIncome = chart_data.years_data.some(year =>
+    year.min_required_income && year.min_required_income > 0
+  );
   
   // Generate colors for each account
   const colorPalette = [
@@ -55,8 +54,6 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
   sortedAccountIds.forEach((id, idx) => {
     accountColors[id] = colorPalette[idx % colorPalette.length];
   });
-  
-  console.log('Account Colors:', accountColors);
 
   // Prepare data for visualization
   const chartData = chart_data.years_data.map(year => {
@@ -74,6 +71,7 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
       'Social Security': year.social_security || year.income_ssa || 0,
       'Dividends': year.dividend_income || 0,
       'Taxes': year.taxes || 0,
+      'Min Required Income': year.min_required_income !== undefined && year.min_required_income !== null ? year.min_required_income : null,
     };
     
     // Add individual account balances
@@ -101,6 +99,17 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
     }
   });
   const sortedWithdrawalAccountIds = Array.from(withdrawalAccountIds).sort();
+
+  // Debug: log data after chartData is created
+  console.log('Chart Data - First Year:', chart_data.years_data[0]);
+  console.log('Has Min Required Income:', hasMinRequiredIncome);
+  console.log('Min Required Income values:', chart_data.years_data.map(y => y.min_required_income));
+  console.log('ChartData mapped (first 3):', chartData.slice(0, 3).map(d => ({ 
+    year: d.year, 
+    minIncome: d['Min Required Income']
+  })));
+  console.log('Sorted Account IDs:', sortedAccountIds);
+  console.log('Account Colors:', accountColors);
 
   const formatChartCurrency = (value: number) => {
     if (value >= 1000000) {
@@ -163,33 +172,9 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
         </AreaChart>
       </ResponsiveContainer>
 
-      <h3 className="chart-section">Total Portfolio Value</h3>
-      <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis 
-            dataKey="year"
-            label={{ value: 'Year', position: 'insideBottom', offset: -5 }}
-          />
-          <YAxis 
-            tickFormatter={formatChartCurrency}
-            label={{ value: 'Total Value', angle: -90, position: 'insideLeft' }}
-          />
-          <Tooltip formatter={(value: number) => formatChartCurrency(value)} />
-          <Legend />
-          <Line 
-            type="monotone" 
-            dataKey="Total Portfolio" 
-            stroke="#2196F3" 
-            strokeWidth={3}
-            dot={false}
-          />
-        </LineChart>
-      </ResponsiveContainer>
-
       <h3 className="chart-section">Annual Income & Taxes</h3>
       <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={chartData}>
+        <ComposedChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis 
             dataKey="year"
@@ -213,7 +198,17 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
           <Bar dataKey="Dividends" stackId="income" fill="#4CAF50" />
           <Bar dataKey="Social Security" stackId="income" fill="#2196F3" />
           <Bar dataKey="Taxes" fill="#F44336" />
-        </BarChart>
+          <Line 
+            type="monotone" 
+            dataKey="Min Required Income" 
+            stroke="#FF9800" 
+            strokeWidth={3}
+            strokeDasharray="5 5"
+            dot={false}
+            name="Min Required Income"
+            connectNulls={false}
+          />
+        </ComposedChart>
       </ResponsiveContainer>
 
       <h3 className="chart-section">Year-by-Year Details</h3>

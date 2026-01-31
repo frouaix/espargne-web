@@ -3,4 +3,6 @@ export const STORAGE_KEYS = {
   ACCOUNTS: 'retirement-calc-accounts',
   SSA_INCOME: 'retirement-calc-ssa-income',
   WITHDRAWAL_STRATEGY: 'retirement-calc-withdrawal-strategy',
+  MIN_REQUIRED_INCOME: 'retirement-calc-min-required-income',
+  MIN_INCOME_INFLATION_RATE: 'retirement-calc-min-income-inflation-rate',
 } as const;

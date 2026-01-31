@@ -11,6 +11,7 @@ export interface YearlyChartData {
   age: number;
   social_security: number;
   pension: number;
+  dividend_income?: number;
   taxable_withdrawal: number;
   traditional_withdrawal: number;
   roth_withdrawal: number;
@@ -21,6 +22,7 @@ export interface YearlyChartData {
   taxable_balance: number;
   traditional_balance: number;
   roth_balance: number;
+  min_required_income?: number | null;
   account_balances?: Record<string, number>;
   account_withdrawals?: Record<string, number>;
   

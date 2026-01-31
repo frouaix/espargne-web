@@ -20,6 +20,14 @@ export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRun
   const [maxYears, setMaxYears] = useState(30);
   const [realReturn, setRealReturn] = useState(0.05);
   const [withdrawalRate, setWithdrawalRate] = useState(0.04);
+  const [minRequiredIncome, setMinRequiredIncome] = useState(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.MIN_REQUIRED_INCOME);
+    return saved ? parseFloat(saved) : 0;
+  });
+  const [minIncomeInflationRate, setMinIncomeInflationRate] = useState(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.MIN_INCOME_INFLATION_RATE);
+    return saved ? parseFloat(saved) : 0.03;
+  });
   const [withdrawalStrategy, setWithdrawalStrategy] = useState<'taxable_first_min_taxes' | 'taxable_first_proportional' | 'traditional_first' | 'pro_rata'>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.WITHDRAWAL_STRATEGY);
     return (saved as any) || 'taxable_first_min_taxes';
@@ -54,6 +62,8 @@ export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRun
         withdrawalRate,
         withdrawalStrategy,
         scenarioName: 'Retirement Scenario',
+        minRequiredIncome,
+        minIncomeInflationRate,
       });
 
       const result = await runProjection(request);
@@ -69,6 +79,15 @@ export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRun
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.WITHDRAWAL_STRATEGY, withdrawalStrategy);
   }, [withdrawalStrategy]);
+
+  // Save min required income settings to localStorage
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.MIN_REQUIRED_INCOME, minRequiredIncome.toString());
+  }, [minRequiredIncome]);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.MIN_INCOME_INFLATION_RATE, minIncomeInflationRate.toString());
+  }, [minIncomeInflationRate]);
 
   // Auto-run projection when inputs change (after initial render)
   useEffect(() => {
@@ -87,6 +106,8 @@ export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRun
     realReturn, 
     withdrawalRate, 
     withdrawalStrategy,
+    minRequiredIncome,
+    minIncomeInflationRate,
     // Also trigger on account/profile changes
     accounts.length,
     totalBalance,
@@ -108,6 +129,8 @@ export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRun
         withdrawalRate,
         withdrawalStrategy,
         scenarioName: 'Retirement Scenario',
+        minRequiredIncome,
+        minIncomeInflationRate,
       });
 
       await downloadProjectionCSV(request, `retirement_${Date.now()}.csv`);
@@ -131,6 +154,8 @@ export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRun
         withdrawalRate,
         withdrawalStrategy,
         scenarioName: 'Retirement Scenario',
+        minRequiredIncome,
+        minIncomeInflationRate,
       });
 
       const result = await getProjectionExplanation(request);
@@ -222,6 +247,49 @@ export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRun
           <small>{maxYears} years (to age {userProfile.retirementAge + maxYears})</small>
         </label>
       </div>
+
+      <div className="form-group">
+        <label>
+          Minimum Required Income (optional):
+          <input
+            type="number"
+            min="0"
+            max="1000000"
+            step="1000"
+            value={minRequiredIncome === 0 ? '' : minRequiredIncome}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value === '') {
+                setMinRequiredIncome(0);
+              } else {
+                const parsed = parseFloat(value);
+                if (!isNaN(parsed)) {
+                  setMinRequiredIncome(parsed);
+                }
+              }
+            }}
+            placeholder="0"
+          />
+          <small>Reference line shown on income chart (not used in calculations)</small>
+        </label>
+      </div>
+
+      {minRequiredIncome > 0 && (
+        <div className="form-group">
+          <label>
+            Min Income Inflation Rate (%):
+            <input
+              type="number"
+              min="0"
+              max="10"
+              step="0.1"
+              value={minIncomeInflationRate * 100}
+              onChange={(e) => setMinIncomeInflationRate(parseFloat(e.target.value) / 100 || 0.03)}
+            />
+            <small>{(minIncomeInflationRate * 100).toFixed(1)}% annual increase</small>
+          </label>
+        </div>
+      )}
 
       <div className="scenario-actions">
         <button

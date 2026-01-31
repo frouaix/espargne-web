@@ -50,6 +50,8 @@ export interface APIProjectionRequest {
   scenario: APIScenario;
   max_years: number;
   real_return: number;
+  min_required_income?: number;
+  min_income_inflation_rate?: number;
 }
 
 /**
@@ -204,6 +206,8 @@ export function createProjectionRequest(
     withdrawalStrategy?: 'taxable_first_min_taxes' | 'taxable_first_proportional' | 'traditional_first' | 'pro_rata';
     maxYears?: number;
     realReturn?: number;
+    minRequiredIncome?: number;
+    minIncomeInflationRate?: number;
   } = {}
 ): APIProjectionRequest {
   const scenario = transformToAPIScenario(
@@ -219,5 +223,7 @@ export function createProjectionRequest(
     scenario,
     max_years: options.maxYears || 30,
     real_return: options.realReturn || 0.05,
+    min_required_income: options.minRequiredIncome || 0,
+    min_income_inflation_rate: options.minIncomeInflationRate || 0.03,
   };
 }
