@@ -8,6 +8,9 @@ export default defineConfig({
     globals: true,
     environment: 'happy-dom',
     setupFiles: ['./src/tests/setup.ts'],
+    // Test files are located in src/tests/ directory
+    // Source files remain in their respective directories (src/utils/, src/components/, etc.)
+    include: ['src/tests/**/*.test.{ts,tsx}'],
     css: true,
     coverage: {
       provider: 'v8',

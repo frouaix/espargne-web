@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { STORAGE_KEYS } from './storage'
+import { STORAGE_KEYS } from '../utils/storage'
 
 describe('storage utilities', () => {
   beforeEach(() => {

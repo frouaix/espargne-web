@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest'
-import { transformToAPIScenario, createProjectionRequest } from './apiTransform'
+import { transformToAPIScenario, createProjectionRequest } from '../utils/apiTransform'
 import type { UserProfileData } from '../components/UserProfileForm'
 import type { SSAIncomeData } from '../components/SSAIncomeForm'
-import type { Account } from './export'
+import type { Account } from '../utils/export'
 
 describe('apiTransform utilities', () => {
   const mockUserProfile: UserProfileData = {
