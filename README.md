@@ -4,7 +4,7 @@ A web application for managing and tracking retirement savings across multiple a
 
 ## Features
 
-- **User Profile Management**: Track birth year, filing status, and planned retirement age
+- **User Profile Management**: Represents birth year, filing status, and planned retirement age
 - **Multiple Account Types**:
   - Roth IRA / 401(k) accounts
   - Traditional IRA / 401(k) accounts
