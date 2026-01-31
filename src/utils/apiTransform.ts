@@ -140,7 +140,7 @@ export function transformToAPIScenario(
   withdrawalStrategy: 'taxable_first_min_taxes' | 'taxable_first_proportional' | 'traditional_first' | 'pro_rata' = 'taxable_first_min_taxes'
 ): APIScenario {
   const currentYear = new Date().getFullYear();
-  const birthYear = currentYear - userProfile.currentAge;
+  const birthYear = userProfile.birthYear;
   const retirementAge = userProfile.retirementAge || 67;
 
   // Filter out real estate and mortgage accounts (not supported by backend yet)

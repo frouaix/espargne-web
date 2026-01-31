@@ -6,7 +6,7 @@ import type { Account } from '../utils/export'
 
 describe('apiTransform utilities', () => {
   const mockUserProfile: UserProfileData = {
-    currentAge: 65,
+    birthYear: 1959,  // Changed from currentAge to birthYear
     retirementAge: 67,
     filingStatus: 'single',
   }
@@ -43,14 +43,14 @@ describe('apiTransform utilities', () => {
     it('should transform basic user profile correctly', () => {
       const result = transformToAPIScenario(mockUserProfile, [], null)
 
-      expect(result.user.birth_year).toBe(new Date().getFullYear() - 65)
+      expect(result.user.birth_year).toBe(1959)
       expect(result.user.retirement_age).toBe(67)
       expect(result.user.filing_status).toBe('single')
       expect(result.filing_status).toBe('single')
     })
 
     it('should convert filing status correctly', () => {
-      const marriedProfile = { ...mockUserProfile, filingStatus: 'married' }
+      const marriedProfile = { ...mockUserProfile, filingStatus: 'married' as any }
       const result = transformToAPIScenario(marriedProfile, [], null)
 
       expect(result.user.filing_status).toBe('mfj')
