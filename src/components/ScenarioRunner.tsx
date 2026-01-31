@@ -250,7 +250,7 @@ export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRun
 
       <div className="form-group">
         <label>
-          Minimum Required Income (optional):
+          Minimum Required Gross Income (optional):
           <input
             type="number"
             min="0"
@@ -270,7 +270,7 @@ export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRun
             }}
             placeholder="0"
           />
-          <small>Reference line shown on income chart (not used in calculations)</small>
+          <small>Pre-tax income floor; withdrawals adjust to meet this target after Social Security and dividends</small>
         </label>
       </div>
 
