@@ -72,6 +72,7 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
       'Dividends': year.dividend_income || 0,
       'Taxes': year.taxes || 0,
       'Min Required Income': year.min_required_income !== undefined && year.min_required_income !== null ? year.min_required_income : null,
+      'Net Income': year.net_income || 0,
     };
     
     // Add individual account balances
@@ -207,6 +208,14 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
             dot={false}
             name="Min Required Income"
             connectNulls={false}
+          />
+          <Line 
+            type="monotone" 
+            dataKey="Net Income" 
+            stroke="#9C27B0" 
+            strokeWidth={3}
+            dot={false}
+            name="Net Income"
           />
         </ComposedChart>
       </ResponsiveContainer>
