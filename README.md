@@ -169,4 +169,6 @@ This project follows strict conventions defined in `.github/instructions/CodingC
 
 ## License
 
-This project is private and not licensed for public use.
+MIT License - see [LICENSE](LICENSE) file for details.
+
+Copyright (c) 2026 François Rouaix
