@@ -57,7 +57,7 @@ Tax laws, retirement regulations, and financial markets are complex and constant
 
 ### Prerequisites
 
-- Node.js 20.19+ or 22.12+ (required by Vite 7.3.1)
+- Node.js 24.0+
 - pnpm package manager
 
 ### Installation

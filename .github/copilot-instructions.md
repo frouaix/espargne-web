@@ -251,7 +251,7 @@ pnpm build
 ```
 
 **Build output**: ~686KB (minified)  
-**Requirements**: Node.js 20.19+ or 22.12+  
+**Requirements**: Node.js 24.0+  
 **Environment variables**: None (all calculation client-side)
 
 ## Performance
@@ -261,7 +261,7 @@ pnpm build
 - Consider Web Worker for Monte Carlo if UI blocks
 
 ## Node Version Requirement
-Vite 7.3.1 requires Node.js 20.19+ or 22.12+. Check with:
+This project requires Node.js 24.0+ for modern features and simplified tooling. Check with:
 ```bash
 node --version
 ```
