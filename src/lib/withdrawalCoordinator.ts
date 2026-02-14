@@ -1,10 +1,9 @@
+// Copyright (c) 2026 François Rouaix
 /**
  * Withdrawal Coordinator - Income Aggregation Infrastructure
  *
  * Orchestrates withdrawals from multiple account types and income sources
  * to meet retirement income targets while optimizing tax efficiency.
- *
- * Port of Python WithdrawalCoordinator from espargne-core/models/strategies/withdrawal_coordinator.py
  *
  * Key features:
  * - Multiple withdrawal sequencing strategies
@@ -288,7 +287,7 @@ export class WithdrawalCoordinator {
 
     // Step 8: Build account metadata for visualization
     const accountMetadata: Record<string, AccountMetadata> = {};
-    for (const [_id, account] of this.accounts) {
+    for (const [, account] of this.accounts) {
       accountMetadata[account.id] = {
         id: account.id,
         nickname: account.nickname,

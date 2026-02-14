@@ -1,3 +1,4 @@
+// Copyright (c) 2026 François Rouaix
 /**
  * Core financial types for retirement planning.
  * 

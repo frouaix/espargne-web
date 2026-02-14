@@ -1,11 +1,10 @@
+// Copyright (c) 2026 François Rouaix
 /**
  * TaxableAccount - Taxable investment account with cost basis tracking.
  * 
  * Implements average cost basis method for capital gains calculations.
  * Withdrawals generate long-term capital gains (LTCG) income.
  * No RMDs required.
- * 
- * Port of Python TaxableInvestmentAccount from models/accounts/taxable_account.py
  */
 
 import Big from 'big.js';
@@ -99,7 +98,7 @@ export class TaxableAccount extends BaseAccount {
    * // result.taxableAmount = 8000 (capital gain)
    * // result.incomeType = LONG_TERM_CAPITAL_GAIN
    */
-  withdraw(amount: Big, _age: number, _year: number): WithdrawalResult {
+  withdraw(amount: Big, _unusedAge: number, _unusedYear: number): WithdrawalResult {
     const requestedAmount = toBig(amount);
     
     // Cap withdrawal at available balance
@@ -149,7 +148,7 @@ export class TaxableAccount extends BaseAccount {
    * @param _birthYear - Birth year (unused)
    * @returns Big(0) - no RMD for taxable accounts
    */
-  calculateRMD(_age: number, _birthYear?: number): Big {
+  calculateRMD(_unusedAge: number, _unusedBirthYear?: number): Big {
     return new Big(0);
   }
 

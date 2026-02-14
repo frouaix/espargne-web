@@ -1,3 +1,4 @@
+// Copyright (c) 2026 François Rouaix
 import type { UserProfileData } from '../components/UserProfileForm';
 import type { RothAccountData } from '../components/RothAccountForm';
 import type { TraditionalAccountData } from '../components/TraditionalAccountForm';

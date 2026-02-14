@@ -1,11 +1,10 @@
+// Copyright (c) 2026 François Rouaix
 /**
  * Monte Carlo Engine - Stochastic Retirement Simulation
  *
  * Runs multiple retirement projections with random returns to analyze plan robustness
  * and quantify uncertainty. Uses normal distribution (Box-Muller transform) to
  * generate stochastic returns for each year of each simulation.
- *
- * Port of Python MonteCarloEngine from espargne-core/simulations/projection_engine.py
  *
  * Key features:
  * - Multiple simulation runs (typically 1000) with stochastic returns

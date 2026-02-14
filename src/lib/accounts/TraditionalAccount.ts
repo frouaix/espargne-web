@@ -1,10 +1,9 @@
+// Copyright (c) 2026 François Rouaix
 /**
  * TraditionalAccount - Tax-deferred retirement account (Traditional IRA/401k).
  * 
  * Implements IRS RMD (Required Minimum Distribution) rules.
  * Withdrawals are ordinary income, fully taxable.
- * 
- * Port of Python SimpleTaxDeferredAccount from models/strategies/withdrawal_coordinator.py
  */
 
 import Big from 'big.js';
@@ -91,7 +90,7 @@ export class TraditionalAccount extends BaseAccount {
    * // result.taxableAmount = 25000 (fully taxable)
    * // result.incomeType = ORDINARY
    */
-  withdraw(amount: Big, _age: number, _year: number): WithdrawalResult {
+  withdraw(amount: Big, _unusedAge: number, _unusedYear: number): WithdrawalResult {
     const requestedAmount = toBig(amount);
     
     // Cap withdrawal at available balance

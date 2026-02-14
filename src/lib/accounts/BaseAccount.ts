@@ -1,10 +1,9 @@
+// Copyright (c) 2026 François Rouaix
 /**
  * BaseAccount - Abstract base class for retirement accounts.
  * 
  * Provides common functionality for account balance tracking, withdrawals,
  * and growth application. All concrete account types must extend this class.
- * 
- * Port of Python RetirementAccount from models/strategies/base.py
  */
 
 import Big from 'big.js';

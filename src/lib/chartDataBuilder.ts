@@ -1,3 +1,4 @@
+// Copyright (c) 2026 François Rouaix
 /**
  * Chart Data Builder - Transform Projection Results into Recharts-Compatible Format
  * 

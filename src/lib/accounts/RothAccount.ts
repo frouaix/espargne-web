@@ -1,10 +1,9 @@
+// Copyright (c) 2026 François Rouaix
 /**
  * RothAccount - Tax-free retirement account (Roth IRA/401k).
  * 
  * Qualified withdrawals are completely tax-free.
  * No Required Minimum Distributions for Roth IRAs during owner's lifetime.
- * 
- * Port of Python SimpleRothAccount from models/strategies/withdrawal_coordinator.py
  */
 
 import Big from 'big.js';
@@ -89,7 +88,7 @@ export class RothAccount extends BaseAccount {
    * // result.taxableAmount = 0 (completely tax-free)
    * // result.remainingBalance = 125000
    */
-  withdraw(amount: Big, _age: number, _year: number): WithdrawalResult {
+  withdraw(amount: Big, _unusedAge: number, _unusedYear: number): WithdrawalResult {
     const requestedAmount = toBig(amount);
     
     // Cap withdrawal at available balance
@@ -116,7 +115,7 @@ export class RothAccount extends BaseAccount {
    * @param _birthYear - Birth year (unused)
    * @returns Big(0) - no RMD for Roth IRAs
    */
-  calculateRMD(_age: number, _birthYear?: number): Big {
+  calculateRMD(_unusedAge: number, _unusedBirthYear?: number): Big {
     return new Big(0);
   }
 

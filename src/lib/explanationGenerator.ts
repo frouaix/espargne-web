@@ -1,3 +1,4 @@
+// Copyright (c) 2026 François Rouaix
 /**
  * Explanation Generator - Human-Readable Retirement Scenario Analysis
  * 

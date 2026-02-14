@@ -1,3 +1,4 @@
+// Copyright (c) 2026 François Rouaix
 /**
  * Big.js helper utilities for financial calculations.
  * 

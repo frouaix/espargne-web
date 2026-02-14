@@ -1,11 +1,10 @@
+// Copyright (c) 2026 François Rouaix
 /**
  * Federal Tax Calculator (2024 parameters)
  * 
  * Computes federal income tax for ordinary income, qualified dividends,
  * long-term capital gains, and Social Security taxation. Also returns AGI
  * and MAGI (for IRMAA checks).
- * 
- * Ported from Python implementation in espargne-core/calculators/tax_federal.py
  * 
  * Methodology:
  * 1. Calculate taxable portion of Social Security benefits (Pub 915 formula)

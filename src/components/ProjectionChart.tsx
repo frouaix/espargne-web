@@ -1,3 +1,4 @@
+// Copyright (c) 2026 François Rouaix
 import { AreaChart, Area, ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import type { ProjectionResult } from '../lib/types';
 import { buildChartData } from '../lib/chartDataBuilder';
@@ -59,7 +60,7 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
   // Prepare data for visualization
   const chartData = dataPoints.map((dataPoint, idx) => {
     const plan = result.withdrawalPlans[idx];
-    const chartPoint: any = {
+    const chartPoint: Record<string, number> = {
       year: dataPoint.year,
       age: dataPoint.age,
       'Total Portfolio': dataPoint.totalPortfolio,

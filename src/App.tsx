@@ -1,13 +1,15 @@
+// Copyright (c) 2026 François Rouaix
 import { useState, useEffect, type ReactElement } from 'react';
 import './App.css';
 import { UserProfileForm, type UserProfileData } from './components/UserProfileForm';
-import { RothAccountForm } from './components/RothAccountForm';
-import { TraditionalAccountForm } from './components/TraditionalAccountForm';
-import { TaxableAccountForm } from './components/TaxableAccountForm';
+import { RothAccountForm, type RothAccountData } from './components/RothAccountForm';
+import { TraditionalAccountForm, type TraditionalAccountData } from './components/TraditionalAccountForm';
+import { TaxableAccountForm, type TaxableAccountData } from './components/TaxableAccountForm';
 import { RealEstateAccountForm } from './components/RealEstateAccountForm';
 import { MortgageAccountForm } from './components/MortgageAccountForm';
 import { SSAIncomeForm, type SSAIncomeData } from './components/SSAIncomeForm';
 import { ScenarioRunner } from './components/ScenarioRunner';
+import { DisclaimerModal } from './components/DisclaimerModal';
 import { STORAGE_KEYS } from './utils/storage';
 import { createExportFile, type ExportData, type Account } from './utils/export';
 import { validateUserProfile, validateAccount } from './utils/validation';
@@ -20,7 +22,12 @@ const handleSSAIncomeSave = (setSsaIncome: (data: SSAIncomeData) => void): ((dat
 };
 
 function App(): ReactElement {
-  const { USER_PROFILE, ACCOUNTS, SSA_INCOME } = STORAGE_KEYS;
+  const { USER_PROFILE, ACCOUNTS, SSA_INCOME, DISCLAIMER_ACCEPTED } = STORAGE_KEYS;
+  
+  const [showDisclaimer, setShowDisclaimer] = useState<boolean>(() => {
+    const accepted = localStorage.getItem(DISCLAIMER_ACCEPTED);
+    return accepted !== 'true';
+  });
   
   const [userProfile, setUserProfile] = useState<UserProfileData | null>(() => {
     const saved = localStorage.getItem(USER_PROFILE);
@@ -70,7 +77,7 @@ function App(): ReactElement {
     const savedAccounts = saved ? JSON.parse(saved) : [];
     if (savedAccounts.length > 0) {
       const collapsed: Record<string, boolean> = {};
-      savedAccounts.forEach((acc: any) => {
+      savedAccounts.forEach((acc: Account) => {
         collapsed[acc.accountId] = true;
       });
       return collapsed;
@@ -179,6 +186,17 @@ function App(): ReactElement {
     }
   };
 
+  const handleDisclaimerAccept = (): void => {
+    try {
+      localStorage.setItem(DISCLAIMER_ACCEPTED, 'true');
+      setShowDisclaimer(false);
+    } catch {
+      // If localStorage is unavailable or quota exceeded, still close the modal.
+      // Note: Disclaimer will reappear on next page load since localStorage write failed.
+      setShowDisclaimer(false);
+    }
+  };
+
   const handleProfileSave = (data: UserProfileData): void => {
     setUserProfile(data);
   };
@@ -271,6 +289,8 @@ function App(): ReactElement {
 
   return (
     <div className="app-container">
+      {showDisclaimer && <DisclaimerModal onAccept={handleDisclaimerAccept} />}
+      
       <div className="header">
         <h1>Retirement Savings Calculator</h1>
         <div className="header-actions">
@@ -389,7 +409,7 @@ function App(): ReactElement {
           {showRothForm ? (
             <RothAccountForm 
               onSave={handleAccountSave} 
-              initialData={editingAccount?.accountType === 'roth' ? editingAccount as any : undefined}
+              initialData={editingAccount?.accountType === 'roth' ? editingAccount as RothAccountData : undefined}
             />
           ) : (
             <button onClick={() => { setEditingAccount(null); setShowRothForm(true); }} className="btn btn-primary">+ Add Roth Account</button>
@@ -431,7 +451,7 @@ function App(): ReactElement {
           {showTraditionalForm ? (
             <TraditionalAccountForm 
               onSave={handleAccountSave} 
-              initialData={editingAccount?.accountType === 'traditional' ? editingAccount as any : undefined}
+              initialData={editingAccount?.accountType === 'traditional' ? editingAccount as TraditionalAccountData : undefined}
             />
           ) : (
             <button onClick={() => { setEditingAccount(null); setShowTraditionalForm(true); }} className="btn btn-secondary">+ Add Traditional Account</button>
@@ -494,7 +514,7 @@ function App(): ReactElement {
           {showTaxableForm ? (
             <TaxableAccountForm 
               onSave={handleAccountSave} 
-              initialData={editingAccount?.accountType === 'taxable' ? editingAccount as any : undefined}
+              initialData={editingAccount?.accountType === 'taxable' ? editingAccount as TaxableAccountData : undefined}
             />
           ) : (
             <button onClick={() => { setEditingAccount(null); setShowTaxableForm(true); }} className="btn btn-tertiary">+ Add Taxable Account</button>

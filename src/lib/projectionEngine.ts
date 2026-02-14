@@ -1,10 +1,9 @@
+// Copyright (c) 2026 François Rouaix
 /**
  * Projection Engine - Multi-Year Retirement Simulation Orchestrator
  *
  * Runs deterministic retirement simulations by orchestrating the WithdrawalCoordinator
  * across multiple years, tracking results, and detecting portfolio depletion.
- *
- * Port of Python ProjectionEngine from espargne-core/simulations/projection_engine.py
  *
  * Key features:
  * - Multi-year deterministic projections with fixed returns
