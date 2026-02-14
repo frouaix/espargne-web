@@ -1,6 +1,6 @@
 # Withdrawal Coordinator
 
-TypeScript implementation of the retirement withdrawal orchestrator, ported from the Python backend.
+TypeScript implementation of the retirement withdrawal orchestrator.
 
 ## Overview
 
@@ -328,7 +328,6 @@ Test categories:
 
 ## References
 
-- **Python Source**: `espargne-core/models/strategies/withdrawal_coordinator.py`
 - **IRS RMD Rules**: Publication 590-B
 - **SSA Claiming**: https://www.ssa.gov/benefits/retirement/planner/agereduction.html
 - **Tax Brackets**: IRS Publication 17 (2024)

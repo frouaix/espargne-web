@@ -5,8 +5,6 @@
  * Implements average cost basis method for capital gains calculations.
  * Withdrawals generate long-term capital gains (LTCG) income.
  * No RMDs required.
- * 
- * Port of Python TaxableInvestmentAccount from models/accounts/taxable_account.py
  */
 
 import Big from 'big.js';

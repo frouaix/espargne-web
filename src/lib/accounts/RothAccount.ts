@@ -4,8 +4,6 @@
  * 
  * Qualified withdrawals are completely tax-free.
  * No Required Minimum Distributions for Roth IRAs during owner's lifetime.
- * 
- * Port of Python SimpleRothAccount from models/strategies/withdrawal_coordinator.py
  */
 
 import Big from 'big.js';

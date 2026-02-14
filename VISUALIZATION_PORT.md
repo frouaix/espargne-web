@@ -1,8 +1,8 @@
-# Visualization Modules - TypeScript Port
+# Visualization Modules
 
 ## Overview
 
-Successfully ported 3 Python visualization and export utilities to TypeScript. These modules transform `ProjectionResult` data into user-facing outputs: charts, CSV files, and human-readable explanations.
+Three visualization and export utilities that transform `ProjectionResult` data into user-facing outputs: charts, CSV files, and human-readable explanations.
 
 ## Modules Created
 
@@ -152,13 +152,13 @@ console.log(explanation.recommendations);
 const text = formatExplanationAsText(explanation);
 ```
 
-## Differences from Python
+## Key Implementation Details
 
-1. **No dataclasses** - Uses TypeScript interfaces instead
+1. **Type system** - Uses TypeScript interfaces for data structures
 2. **Type-only imports** - Required by `verbatimModuleSyntax`
-3. **Number formatting** - Uses `toLocaleString()` instead of Python's f-strings
-4. **No StringIO** - Builds CSV as string directly
-5. **Browser download** - Added `downloadCSV()` function for web usage
+3. **Number formatting** - Uses `toLocaleString()` for thousands separators
+4. **CSV generation** - Builds CSV as string directly
+5. **Browser download** - Includes `downloadCSV()` function for web usage
 
 ## Integration Points
 
