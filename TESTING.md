@@ -7,22 +7,22 @@ This repository uses [Vitest](https://vitest.dev/) for unit testing, with React 
 
 ### Run all tests once
 ```bash
-npm test run
+pnpm test run
 ```
 
 ### Run tests in watch mode
 ```bash
-npm test
+pnpm test
 ```
 
 ### Run tests with UI
 ```bash
-npm run test:ui
+pnpm run test:ui
 ```
 
 ### Run tests with coverage report
 ```bash
-npm run test:coverage
+pnpm run test:coverage
 ```
 
 ## Test Structure
@@ -65,13 +65,13 @@ describe('MyComponent', () => {
 
 ## Test Coverage
 
-Run `npm run test:coverage` to generate a coverage report. The report will be available in:
+Run `pnpm run test:coverage` to generate a coverage report. The report will be available in:
 - Console output (text summary)
 - `coverage/index.html` (detailed HTML report)
 
 ## Current Test Status
 
-As of the initial setup, we have basic tests for the `bigHelpers` module to demonstrate the testing infrastructure is working correctly.
+The test infrastructure is now in place with initial tests for the `bigHelpers` module (18 tests). Additional test coverage for other modules needs to be added. The testing framework and conventions are established to facilitate adding comprehensive tests across the codebase.
 
 ## Adding New Tests
 
