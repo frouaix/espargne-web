@@ -1,26 +1,39 @@
-# Retirement Savings Calculator
+# Espargne - Retirement Planning Application
 
-A web application for managing and tracking retirement savings across multiple account types. Plan your retirement with comprehensive portfolio tracking, Social Security benefit planning, and data import/export capabilities.
+A pure TypeScript SPA for US retirement planning with comprehensive financial simulations. All calculations run in the browser with no backend required.
 
 ## Features
 
-- **User Profile Management**: Represents birth year, filing status, and planned retirement age
+### Portfolio Management
+- **User Profile Management**: Birth year, filing status, planned retirement age
 - **Multiple Account Types**:
-  - Roth IRA / 401(k) accounts
-  - Traditional IRA / 401(k) accounts
-  - Taxable brokerage accounts with cost basis tracking
-- **Social Security Planning**: Input FRA monthly benefit and claiming age
-- **Portfolio Summary**: Real-time calculation of total retirement and taxable account balances
-- **Data Persistence**: Automatic localStorage persistence across browser sessions
-- **Import/Export**: JSON-based data backup and restore with version compatibility checking
-- **Data Management**: Clear all data functionality with confirmation dialog
+  - Roth IRA / 401(k) accounts (tax-free withdrawals, no RMDs)
+  - Traditional IRA / 401(k) accounts (tax-deferred, RMD compliance)
+  - Taxable brokerage accounts (cost basis tracking, LTCG treatment)
+- **Social Security Planning**: FRA benefit and claiming age adjustments
+- **Data Persistence**: Automatic localStorage persistence
+- **Import/Export**: JSON backup and restore with version compatibility
+
+### Financial Simulations
+- **Deterministic Projections**: 30-year retirement simulations with fixed returns
+- **Monte Carlo Analysis**: 1000+ stochastic runs with percentile outcomes
+- **Withdrawal Strategies**: Taxable-first, Traditional-first, Roth-first, Pro-rata
+- **Tax Calculations**: 2024 IRS brackets, LTCG/QD stacking, Social Security taxation
+- **RMD Enforcement**: SECURE Act 2.0 compliant with IRS Uniform Lifetime Table
+- **Chart Visualizations**: Interactive balance and income charts
+- **CSV Export**: Excel-ready projection data
+- **Textual Analysis**: Human-readable explanations with recommendations
 
 ## Technology Stack
 
 - **React 19.2.0** with TypeScript 5.9.3
 - **Vite 7.3.1** for fast development and optimized builds
+- **big.js 7.0.1** for arbitrary precision financial calculations
+- **Recharts 2.12.7** for interactive charts
 - **CSS Modules** for component styling
 - **localStorage API** for client-side data persistence
+
+**No backend required** - All financial calculations run in the browser.
 
 ## Getting Started
 
@@ -51,30 +64,43 @@ The development server will start on `http://localhost:5174` by default.
 
 ```
 src/
-├── components/          # React form components
+├── components/              # React UI components
 │   ├── UserProfileForm.tsx
-│   ├── RothAccountForm.tsx
-│   ├── TraditionalAccountForm.tsx
-│   ├── TaxableAccountForm.tsx
+│   ├── *AccountForm.tsx     # Roth, Traditional, Taxable, Real Estate, Mortgage
 │   ├── SSAIncomeForm.tsx
-│   └── AccountsList.tsx
-├── utils/              # Utility functions and types
-│   ├── storage.ts      # Storage keys constants
-│   ├── export.ts       # Export functionality and types
-│   └── validation.ts   # Data validation functions
-├── App.tsx             # Main application component
-├── App.css             # Application styles
-└── main.tsx            # Application entry point
+│   ├── ScenarioRunner.tsx   # Simulation control and results
+│   ├── ProjectionChart.tsx  # Recharts visualizations
+│   └── ExplanationView.tsx  # Textual analysis display
+├── lib/                     # Financial calculation engine
+│   ├── types.ts             # Core financial types
+│   ├── bigHelpers.ts        # Big.js utilities
+│   ├── taxCalculator.ts     # Federal tax calculations
+│   ├── rmdCalculator.ts     # Required Minimum Distributions
+│   ├── accounts/            # Account models (Taxable, Traditional, Roth)
+│   ├── withdrawalCoordinator.ts  # Multi-account orchestration
+│   ├── projectionEngine.ts  # Deterministic simulations
+│   ├── monteCarlo.ts        # Stochastic simulations
+│   ├── chartDataBuilder.ts  # Chart data transformation
+│   ├── csvExport.ts         # CSV generation
+│   └── explanationGenerator.ts  # Human-readable analysis
+├── utils/                   # UI utilities
+│   ├── scenarioBuilder.ts   # Form data → Scenario transformation
+│   ├── storage.ts           # localStorage keys
+│   ├── export.ts            # Data export
+│   └── validation.ts        # Input validation
+├── tests/                   # Test suites (325 tests)
+├── App.tsx                  # Main application
+└── main.tsx                 # Entry point
 ```
 
-## Data Storage
+## Data & Privacy
 
-All data is stored locally in the browser using the localStorage API:
+All data is stored **locally in the browser** using the localStorage API:
 - User profile data
 - Account information (balances, types, cost basis)
 - Social Security benefit information
 
-Data persists across browser sessions until explicitly cleared by the user.
+**Privacy Guarantee**: Financial data never leaves your browser. All calculations happen client-side with no server transmission.
 
 ## Import/Export Format
 
@@ -92,16 +118,54 @@ Data can be exported to and imported from JSON files with the following structur
 
 Version compatibility checks ensure imported data matches the application version (major version must match).
 
+## Testing
+
+Run the comprehensive test suite:
+
+```bash
+pnpm test run
+```
+
+**325 tests** covering:
+- big.js helpers (53 tests)
+- Tax calculator (34 tests) - validated against IRS examples
+- RMD calculator (44 tests) - SECURE Act 2.0 compliant
+- Account models (54 tests)
+- Withdrawal coordinator (27 tests)
+- Projection engine (25 tests)
+- Monte Carlo (28 tests)
+- Visualization & export (33 tests)
+- UI integration (27 tests)
+
+## Architecture
+
+This is a **pure client-side application**. All retirement calculations run in the browser using:
+- **big.js** for arbitrary precision decimal arithmetic (no floating-point errors)
+- **TypeScript** for type safety and code quality
+- **IRS-compliant calculations** for taxes, RMDs, and Social Security
+
+See `.github/copilot-instructions.md` for detailed architecture documentation.
+
+## Deployment
+
+Deploy as a static site to any hosting provider:
+
+```bash
+pnpm build
+# Deploy dist/ directory to Netlify, Vercel, S3, etc.
+```
+
+**Build output**: ~686KB (minified, includes all business logic)
+
 ## Coding Conventions
 
-This project follows strict coding conventions defined in `.github/instructions/CodingConventions.instructions.md`:
+This project follows strict conventions defined in `.github/instructions/CodingConventions.instructions.md`:
 - Semicolons required for all statements
-- Commas in type and enum declarations
 - Explicit return types for all functions
+- Big.js for all monetary calculations (never use `number` for currency)
 - Destructuring preferred over direct property access
-- Utility functions separated into feature-specific files
-- No inline CSS styles (use CSS classes)
-- No console.log statements in production code
+- No inline CSS styles
+- No console.log in production code
 
 ## License
 

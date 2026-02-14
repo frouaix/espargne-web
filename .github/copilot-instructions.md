@@ -1,13 +1,40 @@
-# Copilot Instructions - Retirement Savings Calculator Web App
+# Copilot Instructions - Espargne Retirement Planning Application
 
 ## Project Overview
-React + TypeScript web application for managing retirement account portfolios and Social Security planning. Client-side only with localStorage persistence. Companion to the Python-based `espargne` calculation engine (separate repository).
+Pure TypeScript SPA for US retirement planning with comprehensive financial simulations. All calculations run in the browser with no backend required.
 
 ## Tech Stack
 - **React 19.2** with TypeScript 5.9
 - **Vite 7.3** for dev server and production builds
+- **big.js 7.0.1** for arbitrary precision financial calculations
+- **Recharts 2.12.7** for interactive visualizations
 - **CSS Modules** for component styling
-- **localStorage API** for data persistence (no backend)
+- **localStorage API** for data persistence
+
+## Architecture Overview
+
+### Pure Client-Side Application
+All retirement calculations happen in the browser:
+- Tax calculations (2024 IRS brackets, LTCG/QD stacking, SSA taxation)
+- RMD calculations (SECURE Act 2.0, IRS Uniform Lifetime Table)
+- Multi-account withdrawal coordination
+- Deterministic projections (30-year simulations)
+- Monte Carlo analysis (1000+ stochastic runs)
+- Chart data generation, CSV export, textual explanations
+
+### Business Logic (`src/lib/`)
+Complete financial calculation engine:
+- `types.ts` - Core financial types
+- `bigHelpers.ts` - Big.js utilities for precision arithmetic
+- `taxCalculator.ts` - Federal tax calculations
+- `rmdCalculator.ts` - Required Minimum Distributions
+- `accounts/` - TaxableAccount, TraditionalAccount, RothAccount models
+- `withdrawalCoordinator.ts` - Multi-account orchestration with 4 sequencing strategies
+- `projectionEngine.ts` - Deterministic simulations
+- `monteCarlo.ts` - Stochastic simulations with percentiles
+- `chartDataBuilder.ts` - Transform results for Recharts
+- `csvExport.ts` - Generate downloadable CSV
+- `explanationGenerator.ts` - Human-readable analysis
 
 ## Architecture Principles
 
@@ -46,7 +73,27 @@ pnpm install    # Install dependencies
 pnpm dev        # Start Vite dev server on http://localhost:5174
 pnpm build      # TypeScript check + production build
 pnpm preview    # Preview production build locally
+pnpm test       # Run 325 unit tests
 ```
+
+### Testing
+```bash
+pnpm test run              # Run all tests once
+pnpm test                  # Watch mode
+pnpm test:ui               # UI for test results
+pnpm test:coverage         # Coverage report
+```
+
+**325 tests** covering all business logic:
+- 53 big.js helpers
+- 34 tax calculator (validated against IRS)
+- 44 RMD calculator
+- 54 account models
+- 27 withdrawal coordinator
+- 25 projection engine
+- 28 Monte Carlo
+- 33 visualization/export
+- 27 UI integration
 
 ### Data Import/Export
 Users can export all data to JSON file and reimport later:
@@ -55,6 +102,28 @@ Users can export all data to JSON file and reimport later:
 - Export format includes version, timestamp, all entities
 
 ## Code Patterns & Conventions
+
+### Big.js for Financial Calculations
+**CRITICAL**: Always use Big.js for monetary values:
+```typescript
+import { toBig, add, multiply } from '../lib/bigHelpers';
+
+// Correct
+const balance = toBig(100000);
+const growth = multiply(balance, 0.05);
+
+// WRONG - Never use number for currency
+const balance = 100000;
+const growth = balance * 0.05;  // ❌ Floating-point errors
+```
+
+Convert to number **only** for display:
+```typescript
+import { toCurrency, toNumber } from '../lib/bigHelpers';
+
+const displayValue = toCurrency(balance, 2);  // "100000.00"
+const chartValue = toNumber(balance);         // 100000 (for Recharts)
+```
 
 ### Account Type Discrimination
 All accounts share common fields but type-discriminated via `accountType`:
@@ -128,9 +197,21 @@ Parent handles state management and visibility toggling.
 
 ## Common Pitfalls
 
+### Big.js Precision
+- **Never mix Big and number** in arithmetic operations
+- Always use `toBig()` before calculations
+- Only convert to number for display/charting
+- Use helper functions from bigHelpers.ts
+
+### Financial Calculations
+- RMDs don't apply to Roth IRAs (owner's lifetime)
+- RMDs calculated on prior year-end balance
+- Social Security up to 85% taxable based on combined income
+- LTCG/QD use preferential rates, stack on top of ordinary income
+
 ### Data Migration on Schema Changes
 - Export format includes `version` field for compatibility checks
-- When adding new account types, update `Account` union type in [export.ts](src/utils/export.ts)
+- When adding new account types, update `Account` union type in types.ts
 - Validate imported data structure before applying to state
 
 ### localStorage Limits
@@ -147,28 +228,37 @@ Parent handles state management and visibility toggling.
 ### TypeScript Strict Mode
 - Project uses strict TypeScript (`strict: true`)
 - Form data must explicitly handle undefined/null cases
-- All number inputs need validation before Decimal/number conversion
+- All number inputs need validation before Big conversion
 
 ## Key Files & Entry Points
 
-- [src/App.tsx](src/App.tsx) - Main component, state management, persistence logic
-- [src/components/](src/components/) - All form components (account types, user profile, SSA income)
-- [src/utils/export.ts](src/utils/export.ts) - Export data structure and file download
-- [src/utils/validation.ts](src/utils/validation.ts) - Import validation, schema checks
-- [src/utils/storage.ts](src/utils/storage.ts) - localStorage key constants
-- [vite.config.ts](vite.config.ts) - Vite configuration (React plugin only)
+- `src/App.tsx` - Main component, state management, persistence logic
+- `src/components/ScenarioRunner.tsx` - Simulation control, runs calculations
+- `src/lib/` - Complete financial calculation engine (see Architecture Overview)
+- `src/utils/scenarioBuilder.ts` - Transform form data to Scenario type
+- `src/utils/storage.ts` - localStorage key constants
+- `src/tests/` - 325 comprehensive tests
+- `.github/copilot-instructions.md` - This file
+- `.github/instructions/CodingConventions.instructions.md` - Code style rules
 
-## Styling Approach
-- CSS Modules for component-scoped styles
-- Global styles in [src/index.css](src/index.css) and [src/App.css](src/App.css)
-- No CSS framework (custom styles throughout)
-- Responsive design not prioritized (desktop-first approach)
+## Deployment
 
-## Future Integration Points
-This frontend is designed to work with Python calculation engine in `espargne` repository:
-- Export JSON format **should align** with Python model schemas
-- Future: POST user data to calculation API for scenario simulations
-- Current: Standalone portfolio tracking only, no projections yet
+Deploy as static site to any hosting provider:
+
+```bash
+pnpm build
+# Deploy dist/ directory to Netlify, Vercel, GitHub Pages, S3, etc.
+```
+
+**Build output**: ~686KB (minified)  
+**Requirements**: Node.js 20.19+ or 22.12+  
+**Environment variables**: None (all calculation client-side)
+
+## Performance
+
+- Deterministic projections: <100ms (30 years)
+- Monte Carlo (1000 runs): 1-3 seconds
+- Consider Web Worker for Monte Carlo if UI blocks
 
 ## Node Version Requirement
 Vite 7.3.1 requires Node.js 20.19+ or 22.12+. Check with:
