@@ -255,3 +255,4 @@ Before submitting a PR:
 MIT License - see [LICENSE](LICENSE) file for details.
 
 Copyright (c) 2026 François Rouaix
+
