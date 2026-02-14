@@ -1,14 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
+import Big from 'big.js';
 import type { UserProfileData } from './UserProfileForm';
 import type { SSAIncomeData } from './SSAIncomeForm';
 import type { Account } from '../utils/export';
-import { createProjectionRequest } from '../utils/apiTransform';
+import { buildScenario } from '../utils/scenarioBuilder';
 import { formatCurrency } from '../utils/format';
-import { runProjection, downloadProjectionCSV, getProjectionExplanation } from '../services/api';
-import type { ProjectionResponse, ExplanationResponse } from '../services/api';
 import { ProjectionChart } from './ProjectionChart';
 import { ExplanationView } from './ExplanationView';
 import { STORAGE_KEYS } from '../utils/storage';
+import { ProjectionEngine } from '../lib/projectionEngine';
+import { generateCSV } from '../lib/csvExport';
+import { generateExplanation } from '../lib/explanationGenerator';
+import type { ProjectionResult } from '../lib/types';
 
 interface ScenarioRunnerProps {
   userProfile: UserProfileData;
@@ -38,20 +41,25 @@ export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRun
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
-  const [projectionResult, setProjectionResult] = useState<ProjectionResponse | null>(null);
-  const [explanation, setExplanation] = useState<ExplanationResponse | null>(null);
+  const [projectionResult, setProjectionResult] = useState<ProjectionResult | null>(null);
+  const [explanation, setExplanation] = useState<ReturnType<typeof generateExplanation> | null>(null);
   const [activeView, setActiveView] = useState<'chart' | 'explanation' | null>(null);
 
   const supportedAccounts = accounts.filter(acc => 
     ['taxable', 'traditional', 'roth'].includes(acc.accountType)
   );
 
-  const totalBalance = supportedAccounts.reduce((sum, acc) => sum + acc.balance, 0);
+  const totalBalance = supportedAccounts.reduce((sum, acc) => {
+    if ('balance' in acc) {
+      return sum + acc.balance;
+    }
+    return sum;
+  }, 0);
   
   // Track if this is the first render
   const isFirstRender = useRef(true);
   
-  const handleRunProjection = async () => {
+  const handleRunProjection = async (): Promise<void> => {
     setLoading(true);
     setError('');
     setProjectionResult(null);
@@ -59,17 +67,22 @@ export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRun
     setActiveView('chart');
 
     try {
-      const request = createProjectionRequest(userProfile, accounts, ssaIncome, {
-        maxYears,
-        realReturn,
+      // Build scenario from frontend data
+      const scenario = buildScenario(userProfile, accounts, ssaIncome, {
+        scenarioName: 'Retirement Scenario',
         withdrawalRate,
         withdrawalStrategy,
-        scenarioName: 'Retirement Scenario',
-        minRequiredIncome,
+        minRequiredIncome: minRequiredIncome > 0 ? minRequiredIncome : undefined,
         minIncomeInflationRate,
       });
 
-      const result = await runProjection(request);
+      // Run projection using local TypeScript engine
+      // Yield to UI before starting calculation
+      await new Promise(resolve => setTimeout(resolve, 10));
+      
+      const engine = new ProjectionEngine(scenario);
+      const result = engine.runProjection(maxYears, new Big(realReturn));
+      
       setProjectionResult(result);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to run projection');
@@ -126,22 +139,39 @@ export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRun
     ssaIncome?.claimingAge
   ]);
 
-  const handleDownloadCSV = async () => {
+  const handleDownloadCSV = async (): Promise<void> => {
     setLoading(true);
     setError('');
 
     try {
-      const request = createProjectionRequest(userProfile, accounts, ssaIncome, {
-        maxYears,
-        realReturn,
+      // Build scenario from frontend data
+      const scenario = buildScenario(userProfile, accounts, ssaIncome, {
+        scenarioName: 'Retirement Scenario',
         withdrawalRate,
         withdrawalStrategy,
-        scenarioName: 'Retirement Scenario',
-        minRequiredIncome,
+        minRequiredIncome: minRequiredIncome > 0 ? minRequiredIncome : undefined,
         minIncomeInflationRate,
       });
 
-      await downloadProjectionCSV(request, `retirement_${Date.now()}.csv`);
+      // Run projection
+      await new Promise(resolve => setTimeout(resolve, 10));
+      
+      const engine = new ProjectionEngine(scenario);
+      const result = engine.runProjection(maxYears, new Big(realReturn));
+
+      // Generate CSV
+      const csvContent = generateCSV(result, scenario.name);
+
+      // Download the file
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `retirement_${Date.now()}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to download CSV');
     } finally {
@@ -149,25 +179,31 @@ export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRun
     }
   };
 
-  const handleGetExplanation = async () => {
+  const handleGetExplanation = async (): Promise<void> => {
     setLoading(true);
     setError('');
     setExplanation(null);
     setActiveView('explanation');
 
     try {
-      const request = createProjectionRequest(userProfile, accounts, ssaIncome, {
-        maxYears,
-        realReturn,
+      // Build scenario from frontend data
+      const scenario = buildScenario(userProfile, accounts, ssaIncome, {
+        scenarioName: 'Retirement Scenario',
         withdrawalRate,
         withdrawalStrategy,
-        scenarioName: 'Retirement Scenario',
-        minRequiredIncome,
+        minRequiredIncome: minRequiredIncome > 0 ? minRequiredIncome : undefined,
         minIncomeInflationRate,
       });
 
-      const result = await getProjectionExplanation(request);
-      setExplanation(result);
+      // Run projection
+      await new Promise(resolve => setTimeout(resolve, 10));
+      
+      const engine = new ProjectionEngine(scenario);
+      const result = engine.runProjection(maxYears, new Big(realReturn));
+
+      // Generate explanation
+      const explanationResult = generateExplanation(result);
+      setExplanation(explanationResult);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to generate explanation');
     } finally {
@@ -331,11 +367,11 @@ export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRun
         </div>
       )}
 
-      {activeView === 'chart' && projectionResult?.success && projectionResult.result && (
-        <ProjectionChart result={projectionResult.result} />
+      {activeView === 'chart' && projectionResult && (
+        <ProjectionChart result={projectionResult} />
       )}
 
-      {activeView === 'explanation' && explanation?.success && (
+      {activeView === 'explanation' && explanation && (
         <ExplanationView explanation={explanation} />
       )}
     </div>

@@ -59,9 +59,9 @@ function App(): ReactElement {
         'ssa': true,
         'liabilities': true,
         'summary': false  // Keep summary expanded
-      };
+      } as Record<string, boolean>;
     }
-    return {};
+    return {} as Record<string, boolean>;
   });
   
   const [collapsedCards, setCollapsedCards] = useState<Record<string, boolean>>(() => {

@@ -1,47 +1,38 @@
-import { LineChart, Line, AreaChart, Area, BarChart, Bar, ComposedChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import type { ProjectionResult } from '../services/api';
+import { AreaChart, Area, ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import type { ProjectionResult } from '../lib/types';
+import { buildChartData } from '../lib/chartDataBuilder';
 import { formatCurrency } from '../utils/format';
+import { toNumber } from '../lib/bigHelpers';
 
 interface ProjectionChartProps {
   result: ProjectionResult;
 }
 
 export function ProjectionChart({ result }: ProjectionChartProps) {
-  const { chart_data, success, failure_year, failure_age, total_years } = result;
+  // Build chart data from projection result
+  const chartDataset = buildChartData(result);
+  const { dataPoints } = chartDataset;
+  
+  const success = result.success;
+  const failureYear = result.failureYear;
+  const failureAge = result.failureAge;
+  const totalYears = result.withdrawalPlans.length;
 
-  // Get all unique account IDs from both balances and withdrawals
+  // Get all unique account IDs from withdrawal plans
   const accountIds = new Set<string>();
-  chart_data.years_data.forEach(year => {
-    if (year.account_balances) {
-      Object.keys(year.account_balances).forEach(id => accountIds.add(id));
-    }
-    if (year.account_withdrawals) {
-      Object.keys(year.account_withdrawals).forEach(id => accountIds.add(id));
-    }
+  result.withdrawalPlans.forEach(plan => {
+    Object.keys(plan.accountBalances).forEach(id => accountIds.add(id));
+    Object.keys(plan.accountWithdrawals).forEach(id => accountIds.add(id));
   });
   
   // Sort account IDs for consistent ordering
   const sortedAccountIds = Array.from(accountIds).sort();
   
   // Check which account types have non-zero balances
-  const hasAnyTaxable = chart_data.years_data.some(year => 
-    (year.taxable_balance || year.balance_taxable || 0) > 0
-  );
-  const hasAnyTraditional = chart_data.years_data.some(year => 
-    (year.traditional_balance || year.balance_traditional || 0) > 0
-  );
-  const hasAnyRoth = chart_data.years_data.some(year => 
-    (year.roth_balance || year.balance_roth || 0) > 0
-  );
-  const hasAnySocialSecurity = chart_data.years_data.some(year =>
-    (year.social_security || year.income_ssa || 0) > 0
-  );
-  const hasAnyDividends = chart_data.years_data.some(year =>
-    (year.dividend_income || 0) > 0
-  );
-  const hasMinRequiredIncome = chart_data.years_data.some(year =>
-    year.min_required_income && year.min_required_income > 0
-  );
+  const hasAnyTaxable = dataPoints.some(d => d.taxableBalance > 0);
+  const hasAnyTraditional = dataPoints.some(d => d.traditionalBalance > 0);
+  const hasAnyRoth = dataPoints.some(d => d.rothBalance > 0);
+  const hasAnySocialSecurity = dataPoints.some(d => d.socialSecurity > 0);
   
   // Generate colors for each account
   const colorPalette = [
@@ -56,61 +47,41 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
   });
 
   // Prepare data for visualization
-  const chartData = chart_data.years_data.map(year => {
-    const dataPoint: any = {
-      year: year.year,
-      age: year.age,
-      'Total Portfolio': year.total_portfolio_value || year.total_balance || 0,
-      'Total Income': (year.taxable_withdrawal || year.income_taxable || 0) + 
-                       (year.traditional_withdrawal || year.income_traditional || 0) + 
-                       (year.roth_withdrawal || year.income_roth || 0) + 
-                       (year.social_security || year.income_ssa || 0) + 
-                       (year.dividend_income || 0) +
-                       (year.pension || year.income_pension || 0) + 
-                       (year.other_income || year.income_other || 0),
-      'Social Security': year.social_security || year.income_ssa || 0,
-      'Dividends': year.dividend_income || 0,
-      'Taxes': year.taxes || 0,
-      'Min Required Income': year.min_required_income !== undefined && year.min_required_income !== null ? year.min_required_income : null,
-      'Net Income': year.net_income || 0,
+  const chartData = dataPoints.map((dataPoint, idx) => {
+    const plan = result.withdrawalPlans[idx];
+    const chartPoint: any = {
+      year: dataPoint.year,
+      age: dataPoint.age,
+      'Total Portfolio': dataPoint.totalPortfolio,
+      'Total Income': dataPoint.totalIncome,
+      'Social Security': dataPoint.socialSecurity,
+      'Taxes': dataPoint.taxes, // Already negative
+      'Net Income': dataPoint.totalIncome + dataPoint.taxes, // taxes is negative
     };
     
     // Add individual account balances
-    if (year.account_balances) {
-      Object.entries(year.account_balances).forEach(([accountId, balance]) => {
-        dataPoint[accountId] = balance;
-      });
-    }
+    Object.entries(plan.accountBalances).forEach(([accountId, balance]) => {
+      chartPoint[accountId] = toNumber(balance);
+    });
     
     // Add individual account withdrawals (prefixed to distinguish from balances)
-    if (year.account_withdrawals) {
-      Object.entries(year.account_withdrawals).forEach(([accountId, withdrawal]) => {
-        dataPoint[`withdrawal_${accountId}`] = withdrawal;
-      });
-    }
+    Object.entries(plan.accountWithdrawals).forEach(([accountId, withdrawal]) => {
+      chartPoint[`withdrawal_${accountId}`] = toNumber(withdrawal);
+    });
     
-    return dataPoint;
+    return chartPoint;
   });
   
   // Get all unique withdrawal account IDs (sorted for consistency)
   const withdrawalAccountIds = new Set<string>();
-  chart_data.years_data.forEach(year => {
-    if (year.account_withdrawals) {
-      Object.keys(year.account_withdrawals).forEach(id => withdrawalAccountIds.add(id));
-    }
+  result.withdrawalPlans.forEach(plan => {
+    Object.keys(plan.accountWithdrawals).forEach(id => {
+      if (toNumber(plan.accountWithdrawals[id]) > 0) {
+        withdrawalAccountIds.add(id);
+      }
+    });
   });
   const sortedWithdrawalAccountIds = Array.from(withdrawalAccountIds).sort();
-
-  // Debug: log data after chartData is created
-  console.log('Chart Data - First Year:', chart_data.years_data[0]);
-  console.log('Has Min Required Income:', hasMinRequiredIncome);
-  console.log('Min Required Income values:', chart_data.years_data.map(y => y.min_required_income));
-  console.log('ChartData mapped (first 3):', chartData.slice(0, 3).map(d => ({ 
-    year: d.year, 
-    minIncome: d['Min Required Income']
-  })));
-  console.log('Sorted Account IDs:', sortedAccountIds);
-  console.log('Account Colors:', accountColors);
 
   const formatChartCurrency = (value: number) => {
     if (value >= 1000000) {
@@ -130,18 +101,18 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
         </h3>
         <div className="projection-metrics">
           <div>
-            <strong>Years Simulated:</strong> {total_years}<br />
-            <strong>Final Portfolio:</strong> ${formatCurrency(result.final_portfolio_value)}<br />
-            {!success && failure_year && (
+            <strong>Years Simulated:</strong> {totalYears}<br />
+            <strong>Final Portfolio:</strong> ${formatCurrency(toNumber(result.finalPortfolioValue))}<br />
+            {!success && failureYear && (
               <>
-                <strong className="failure-info">Failed in Year:</strong> {failure_year} (age {failure_age})
+                <strong className="failure-info">Failed in Year:</strong> {failureYear} (age {failureAge})
               </>
             )}
           </div>
           <div>
-            <strong>Total Withdrawals:</strong> ${formatCurrency(result.total_withdrawals)}<br />
-            <strong>Total Taxes:</strong> ${formatCurrency(result.total_taxes_paid)}<br />
-            <strong>Net Income:</strong> ${formatCurrency(result.total_withdrawals - result.total_taxes_paid)}
+            <strong>Total Withdrawals:</strong> ${formatCurrency(toNumber(result.totalWithdrawals))}<br />
+            <strong>Total Taxes:</strong> ${formatCurrency(toNumber(result.totalTaxesPaid))}<br />
+            <strong>Net Income:</strong> ${formatCurrency(toNumber(result.totalWithdrawals.minus(result.totalTaxesPaid)))}
           </div>
         </div>
       </div>
@@ -196,19 +167,8 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
               fill={accountColors[accountId] || '#999999'} 
             />
           ))}
-          <Bar dataKey="Dividends" stackId="income" fill="#4CAF50" />
           <Bar dataKey="Social Security" stackId="income" fill="#2196F3" />
           <Bar dataKey="Taxes" fill="#F44336" />
-          <Line 
-            type="monotone" 
-            dataKey="Min Required Income" 
-            stroke="#FF9800" 
-            strokeWidth={3}
-            strokeDasharray="5 5"
-            dot={false}
-            name="Min Required Income"
-            connectNulls={false}
-          />
           <Line 
             type="monotone" 
             dataKey="Net Income" 
@@ -229,7 +189,6 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
               <th>Age</th>
               <th className="align-right">Income</th>
               {hasAnySocialSecurity && <th className="align-right">Social Security</th>}
-              {hasAnyDividends && <th className="align-right">Dividends</th>}
               <th className="align-right">Taxes</th>
               <th className="align-right">Tax Rate</th>
               <th className="align-right">Net Income</th>
@@ -240,41 +199,25 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
             </tr>
           </thead>
           <tbody>
-            {chart_data.years_data.map((year, idx) => {
-              const totalIncome = (year.taxable_withdrawal || year.income_taxable || 0) + 
-                                  (year.traditional_withdrawal || year.income_traditional || 0) + 
-                                  (year.roth_withdrawal || year.income_roth || 0) + 
-                                  (year.social_security || year.income_ssa || 0) +
-                                  (year.dividend_income || 0);
-              const netIncome = year.net_income || (totalIncome - (year.taxes || 0));
-              const taxRate = totalIncome > 0 ? ((year.taxes || 0) / totalIncome * 100) : 0;
-              const taxableBalance = year.taxable_balance || year.balance_taxable || 0;
-              const traditionalBalance = year.traditional_balance || year.balance_traditional || 0;
-              const rothBalance = year.roth_balance || year.balance_roth || 0;
-              const totalBalance = year.total_portfolio_value || year.total_balance || 0;
-              
-              const socialSecurityIncome = year.social_security || year.income_ssa || 0;
-              const dividendIncome = year.dividend_income || 0;
+            {dataPoints.map((dataPoint, idx) => {
+              const totalIncome = dataPoint.totalIncome;
+              const netIncome = totalIncome + dataPoint.taxes; // taxes is negative
+              const taxRate = totalIncome > 0 ? ((Math.abs(dataPoint.taxes) / totalIncome) * 100) : 0;
               
               return (
                 <tr key={idx}>
-                  <td>{year.year}</td>
-                  <td>{year.age}</td>
+                  <td>{dataPoint.year}</td>
+                  <td>{dataPoint.age}</td>
                   <td className="align-right">
                     ${formatCurrency(totalIncome)}
                   </td>
                   {hasAnySocialSecurity && (
                     <td className="align-right">
-                      ${formatCurrency(socialSecurityIncome)}
-                    </td>
-                  )}
-                  {hasAnyDividends && (
-                    <td className="align-right">
-                      ${formatCurrency(dividendIncome)}
+                      ${formatCurrency(dataPoint.socialSecurity)}
                     </td>
                   )}
                   <td className="align-right">
-                    ${formatCurrency(year.taxes || 0)}
+                    ${formatCurrency(Math.abs(dataPoint.taxes))}
                   </td>
                   <td className="align-right">
                     {taxRate.toFixed(1)}%
@@ -284,21 +227,21 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
                   </td>
                   {hasAnyTaxable && (
                     <td className="align-right">
-                      ${formatCurrency(taxableBalance)}
+                      ${formatCurrency(dataPoint.taxableBalance)}
                     </td>
                   )}
                   {hasAnyTraditional && (
                     <td className="align-right">
-                      ${formatCurrency(traditionalBalance)}
+                      ${formatCurrency(dataPoint.traditionalBalance)}
                     </td>
                   )}
                   {hasAnyRoth && (
                     <td className="align-right">
-                      ${formatCurrency(rothBalance)}
+                      ${formatCurrency(dataPoint.rothBalance)}
                     </td>
                   )}
                   <td className="align-right bold">
-                    ${formatCurrency(totalBalance)}
+                    ${formatCurrency(dataPoint.totalPortfolio)}
                   </td>
                 </tr>
               );

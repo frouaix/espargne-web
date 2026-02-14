@@ -6,5 +6,9 @@ export const validateUserProfile = (profile: UserProfileData): boolean => {
 };
 
 export const validateAccount = (acc: Account): boolean => {
-  return Boolean(acc.accountId && acc.accountType && typeof acc.balance === 'number');
+  return Boolean(
+    acc.accountId && 
+    acc.accountType && 
+    ('balance' in acc ? typeof acc.balance === 'number' : true)
+  );
 };
