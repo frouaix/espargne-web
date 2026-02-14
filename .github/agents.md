@@ -149,7 +149,7 @@ pnpm preview     # Test production build locally
 ### Critical Dependencies
 - `big.js@7.0.1` - Must maintain version for financial precision
 - `react@19.2.0` - Core framework
-- `vite@7.3.1` - Build tool (requires Node 20.19+/22.12+)
+- `vite@7.2.4` - Build tool (requires Node 20.19+/22.12+)
 - `recharts@2.12.7` - Visualization library
 
 ---
