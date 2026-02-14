@@ -1,3 +1,4 @@
+// Copyright (c) 2026 François Rouaix
 import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import path from 'path'

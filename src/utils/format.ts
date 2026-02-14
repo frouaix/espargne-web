@@ -1,3 +1,4 @@
+// Copyright (c) 2026 François Rouaix
 /**
  * Format a number as US currency without cents (no dollar sign included)
  * @param amount - The amount to format

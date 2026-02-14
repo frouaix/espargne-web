@@ -1,3 +1,4 @@
+// Copyright (c) 2026 François Rouaix
 import { AreaChart, Area, ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import type { ProjectionResult } from '../lib/types';
 import { buildChartData } from '../lib/chartDataBuilder';

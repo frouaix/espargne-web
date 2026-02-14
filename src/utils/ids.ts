@@ -1,3 +1,4 @@
+// Copyright (c) 2026 François Rouaix
 /**
  * Generate a unique ID for accounts
  * Uses crypto.randomUUID if available, falls back to timestamp-based ID

@@ -1,3 +1,4 @@
+// Copyright (c) 2026 François Rouaix
 /**
  * Withdrawal Coordinator - Income Aggregation Infrastructure
  *

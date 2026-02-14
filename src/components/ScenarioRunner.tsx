@@ -1,3 +1,4 @@
+// Copyright (c) 2026 François Rouaix
 import { useState, useEffect, useRef } from 'react';
 import Big from 'big.js';
 import type { UserProfileData } from './UserProfileForm';

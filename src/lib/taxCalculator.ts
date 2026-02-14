@@ -1,3 +1,4 @@
+// Copyright (c) 2026 François Rouaix
 /**
  * Federal Tax Calculator (2024 parameters)
  * 

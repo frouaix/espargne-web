@@ -1,3 +1,4 @@
+// Copyright (c) 2026 François Rouaix
 /**
  * CSV Export - Year-by-Year Retirement Projection Data Export
  * 

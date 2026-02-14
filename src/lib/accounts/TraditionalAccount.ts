@@ -1,3 +1,4 @@
+// Copyright (c) 2026 François Rouaix
 /**
  * TraditionalAccount - Tax-deferred retirement account (Traditional IRA/401k).
  * 

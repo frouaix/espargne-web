@@ -1,3 +1,4 @@
+// Copyright (c) 2026 François Rouaix
 import type { ExplanationResult } from '../lib/explanationGenerator';
 
 interface ExplanationViewProps {
