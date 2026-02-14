@@ -1,3 +1,4 @@
+// Copyright (c) 2026 François Rouaix
 import { useState, useEffect, type ReactElement } from 'react';
 import './App.css';
 import { UserProfileForm, type UserProfileData } from './components/UserProfileForm';

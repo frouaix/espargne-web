@@ -1,3 +1,4 @@
+// Copyright (c) 2026 François Rouaix
 /**
  * RothAccount - Tax-free retirement account (Roth IRA/401k).
  * 

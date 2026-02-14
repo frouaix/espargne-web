@@ -1,3 +1,4 @@
+// Copyright (c) 2026 François Rouaix
 export const STORAGE_KEYS = {
   USER_PROFILE: 'retirement-calc-user-profile',
   ACCOUNTS: 'retirement-calc-accounts',

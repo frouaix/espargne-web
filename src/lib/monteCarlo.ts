@@ -1,3 +1,4 @@
+// Copyright (c) 2026 François Rouaix
 /**
  * Monte Carlo Engine - Stochastic Retirement Simulation
  *

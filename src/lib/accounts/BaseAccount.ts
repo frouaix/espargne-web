@@ -1,3 +1,4 @@
+// Copyright (c) 2026 François Rouaix
 /**
  * BaseAccount - Abstract base class for retirement accounts.
  * 

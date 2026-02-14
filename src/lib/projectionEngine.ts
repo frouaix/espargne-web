@@ -1,3 +1,4 @@
+// Copyright (c) 2026 François Rouaix
 /**
  * Projection Engine - Multi-Year Retirement Simulation Orchestrator
  *

@@ -1,3 +1,4 @@
+// Copyright (c) 2026 François Rouaix
 /**
  * Scenario Builder - Transform Frontend Data to Lib Scenario Format
  * 

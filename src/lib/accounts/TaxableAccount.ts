@@ -1,3 +1,4 @@
+// Copyright (c) 2026 François Rouaix
 /**
  * TaxableAccount - Taxable investment account with cost basis tracking.
  * 

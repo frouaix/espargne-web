@@ -1,3 +1,4 @@
+// Copyright (c) 2026 François Rouaix
 import React, { useState } from 'react';
 import { generateAccountId } from '../utils/ids';
 

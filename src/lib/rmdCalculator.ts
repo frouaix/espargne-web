@@ -1,3 +1,4 @@
+// Copyright (c) 2026 François Rouaix
 /**
  * IRS Required Minimum Distribution (RMD) Calculator
  *
