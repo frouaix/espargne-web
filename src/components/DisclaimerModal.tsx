@@ -7,9 +7,9 @@ interface DisclaimerModalProps {
 
 export const DisclaimerModal: React.FC<DisclaimerModalProps> = ({ onAccept }) => {
   return (
-    <div className="disclaimer-overlay">
+    <div className="disclaimer-overlay" role="dialog" aria-modal="true" aria-labelledby="disclaimer-title">
       <div className="disclaimer-modal">
-        <h2>⚠️ DISCLAIMER</h2>
+        <h2 id="disclaimer-title">⚠️ DISCLAIMER</h2>
         
         <div className="disclaimer-content">
           <p><strong>THIS SOFTWARE IS PROVIDED FOR EDUCATIONAL AND INFORMATIONAL PURPOSES ONLY.</strong></p>
@@ -27,7 +27,7 @@ export const DisclaimerModal: React.FC<DisclaimerModalProps> = ({ onAccept }) =>
           <p className="disclaimer-acknowledge">By clicking "I Understand and Accept", you acknowledge that you understand these limitations and accept full responsibility for your financial decisions.</p>
         </div>
         
-        <button className="btn-accept" onClick={onAccept}>
+        <button type="button" className="btn-accept" onClick={onAccept} aria-label="Accept disclaimer and continue to application">
           I Understand and Accept
         </button>
       </div>
