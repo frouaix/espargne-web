@@ -17,7 +17,7 @@ This file defines specialized agent personas for the Espargne retirement plannin
 - Test React component behavior
 
 ### Technology Stack
-- **Test Framework**: Vitest 3.0.2
+- **Test Framework**: Vitest 4.0.18
 - **React Testing**: @testing-library/react 16.1.0
 - **Assertion Library**: Vitest built-in matchers
 - **Coverage Tool**: v8 (via Vitest)
