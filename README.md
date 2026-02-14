@@ -226,6 +226,30 @@ This software is provided "AS IS" under the MIT License, WITHOUT WARRANTY OF ANY
 
 **By using this application, you acknowledge that you understand these limitations and accept full responsibility for your financial decisions.**
 
+## Contributing
+
+Contributions are welcome! This project is set up to work with GitHub Copilot coding agent.
+
+- See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines and workflow
+- See [.github/agents.md](.github/agents.md) for Copilot agent personas and boundaries
+- See [.github/copilot-instructions.md](.github/copilot-instructions.md) for detailed coding patterns
+
+### Quick Start for Contributors
+
+```bash
+git clone https://github.com/frouaix/espargne-web.git
+cd espargne-web
+pnpm install
+pnpm dev
+pnpm test
+```
+
+Before submitting a PR:
+- ✅ Run tests: `pnpm test run`
+- ✅ Run linter: `pnpm lint`
+- ✅ Run build: `pnpm build`
+- ✅ Update documentation if needed
+
 ## License
 
 MIT License - see [LICENSE](LICENSE) file for details.
