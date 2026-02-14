@@ -1,5 +1,6 @@
 # Espargne - Retirement Planning Application
 
+[![CI](https://github.com/frouaix/espargne-web/actions/workflows/ci.yml/badge.svg)](https://github.com/frouaix/espargne-web/actions/workflows/ci.yml)
 [![Deploy to GitHub Pages](https://github.com/frouaix/espargne-web/actions/workflows/deploy.yml/badge.svg)](https://github.com/frouaix/espargne-web/actions/workflows/deploy.yml)
 
 A pure TypeScript SPA for US retirement planning with comprehensive financial simulations. All calculations run in the browser with no backend required.
