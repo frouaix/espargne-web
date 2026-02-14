@@ -124,7 +124,7 @@ pnpm dev         # Test documentation examples work
 - Maintain GitHub Actions workflows
 
 ### Technology Stack
-- **Build Tool**: Vite 7.3.1
+- **Build Tool**: Vite 7.2.4
 - **Package Manager**: pnpm 10.x
 - **CI/CD**: GitHub Actions
 - **Deployment**: GitHub Pages (static site)
