@@ -90,7 +90,7 @@ export class TraditionalAccount extends BaseAccount {
    * // result.taxableAmount = 25000 (fully taxable)
    * // result.incomeType = ORDINARY
    */
-  withdraw(amount: Big, _age: number, _year: number): WithdrawalResult {
+  withdraw(amount: Big, /* age */ _unusedAge: number, /* year */ _unusedYear: number): WithdrawalResult {
     const requestedAmount = toBig(amount);
     
     // Cap withdrawal at available balance

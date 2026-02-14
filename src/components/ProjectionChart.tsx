@@ -60,7 +60,7 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
   // Prepare data for visualization
   const chartData = dataPoints.map((dataPoint, idx) => {
     const plan = result.withdrawalPlans[idx];
-    const chartPoint: any = {
+    const chartPoint: Record<string, number> = {
       year: dataPoint.year,
       age: dataPoint.age,
       'Total Portfolio': dataPoint.totalPortfolio,

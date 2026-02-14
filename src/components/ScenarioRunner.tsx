@@ -37,7 +37,10 @@ export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRun
   });
   const [withdrawalStrategy, setWithdrawalStrategy] = useState<'taxable_first_min_taxes' | 'taxable_first_proportional' | 'traditional_first' | 'pro_rata'>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.WITHDRAWAL_STRATEGY);
-    return (saved as any) || 'taxable_first_min_taxes';
+    const validStrategies = ['taxable_first_min_taxes', 'taxable_first_proportional', 'traditional_first', 'pro_rata'];
+    return saved && validStrategies.includes(saved) 
+      ? saved as 'taxable_first_min_taxes' | 'taxable_first_proportional' | 'traditional_first' | 'pro_rata'
+      : 'taxable_first_min_taxes';
   });
   
   const [loading, setLoading] = useState(false);
@@ -254,7 +257,7 @@ export function ScenarioRunner({ userProfile, accounts, ssaIncome }: ScenarioRun
       <div className="form-group">
         <label>
           Withdrawal Strategy:
-          <select value={withdrawalStrategy} onChange={(e) => setWithdrawalStrategy(e.target.value as any)}>
+          <select value={withdrawalStrategy} onChange={(e) => setWithdrawalStrategy(e.target.value as 'taxable_first_min_taxes' | 'taxable_first_proportional' | 'traditional_first' | 'pro_rata')}>
             <option value="taxable_first_min_taxes">Taxable First (Minimum Taxes)</option>
             <option value="taxable_first_proportional">Taxable First (Proportional)</option>
             <option value="traditional_first">Traditional First</option>
