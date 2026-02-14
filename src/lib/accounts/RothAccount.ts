@@ -88,7 +88,7 @@ export class RothAccount extends BaseAccount {
    * // result.taxableAmount = 0 (completely tax-free)
    * // result.remainingBalance = 125000
    */
-  withdraw(amount: Big, /* age */ _unusedAge: number, /* year */ _unusedYear: number): WithdrawalResult {
+  withdraw(amount: Big, _unusedAge: number, _unusedYear: number): WithdrawalResult {
     const requestedAmount = toBig(amount);
     
     // Cap withdrawal at available balance
@@ -115,7 +115,7 @@ export class RothAccount extends BaseAccount {
    * @param _birthYear - Birth year (unused)
    * @returns Big(0) - no RMD for Roth IRAs
    */
-  calculateRMD(/* age */ _unusedAge: number, /* birthYear */ _unusedBirthYear?: number): Big {
+  calculateRMD(_unusedAge: number, _unusedBirthYear?: number): Big {
     return new Big(0);
   }
 
