@@ -57,6 +57,7 @@ export class TraditionalAccount extends BaseAccount {
    * @param id - Unique account identifier
    * @param initialBalance - Starting balance
    * @param birthYear - Optional birth year for accurate RMD age calculation
+   * @param nickname - Optional display name
    * 
    * @example
    * new TraditionalAccount('401k', 1000000, 1958);
@@ -66,8 +67,9 @@ export class TraditionalAccount extends BaseAccount {
     id: string,
     initialBalance: Big | number | string,
     birthYear?: number,
+    nickname?: string,
   ) {
-    super(id, initialBalance, AccountType.TRADITIONAL);
+    super(id, initialBalance, AccountType.TRADITIONAL, nickname);
     this.birthYear = birthYear;
   }
 

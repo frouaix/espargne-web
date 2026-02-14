@@ -221,7 +221,7 @@ export class ProjectionEngine {
    */
   private createAccounts(): BaseAccount[] {
     return this.scenario.accounts.map((accountDef) => {
-      const { id, accountType, balance, costBasis } = accountDef;
+      const { id, accountType, balance, costBasis, nickname } = accountDef;
 
       switch (accountType) {
         case AccountType.TAXABLE:
@@ -229,6 +229,7 @@ export class ProjectionEngine {
             id,
             balance,
             costBasis ?? balance,
+            nickname,
           );
 
         case AccountType.TRADITIONAL:
@@ -236,12 +237,14 @@ export class ProjectionEngine {
             id,
             balance,
             this.scenario.user.birthYear,
+            nickname,
           );
 
         case AccountType.ROTH:
           return new RothAccount(
             id,
             balance,
+            nickname,
           );
 
         default:

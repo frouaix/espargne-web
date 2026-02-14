@@ -48,6 +48,7 @@ export class TaxableAccount extends BaseAccount {
    * @param id - Unique account identifier
    * @param initialBalance - Starting balance
    * @param initialCostBasis - Starting cost basis (total invested capital)
+   * @param nickname - Optional display name
    * @throws {Error} If cost basis is negative or exceeds balance
    * 
    * @example
@@ -58,8 +59,9 @@ export class TaxableAccount extends BaseAccount {
     id: string,
     initialBalance: Big | number | string,
     initialCostBasis: Big | number | string,
+    nickname?: string,
   ) {
-    super(id, initialBalance, AccountType.TAXABLE);
+    super(id, initialBalance, AccountType.TAXABLE, nickname);
     
     const basis = toBig(initialCostBasis);
     

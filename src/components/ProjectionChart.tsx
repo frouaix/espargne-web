@@ -28,6 +28,16 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
   // Sort account IDs for consistent ordering
   const sortedAccountIds = Array.from(accountIds).sort();
   
+  // Build account display names (nickname or ID)
+  const accountDisplayNames: Record<string, string> = {};
+  if (result.withdrawalPlans.length > 0) {
+    const firstPlan = result.withdrawalPlans[0];
+    sortedAccountIds.forEach(id => {
+      const metadata = firstPlan.accountMetadata?.[id];
+      accountDisplayNames[id] = metadata?.nickname || id;
+    });
+  }
+  
   // Check which account types have non-zero balances
   const hasAnyTaxable = dataPoints.some(d => d.taxableBalance > 0);
   const hasAnyTraditional = dataPoints.some(d => d.traditionalBalance > 0);
@@ -136,6 +146,7 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
               key={accountId}
               type="monotone" 
               dataKey={accountId} 
+              name={accountDisplayNames[accountId]}
               stackId="1"
               stroke={accountColors[accountId]} 
               fill={accountColors[accountId]} 
@@ -162,7 +173,7 @@ export function ProjectionChart({ result }: ProjectionChartProps) {
             <Bar 
               key={accountId}
               dataKey={`withdrawal_${accountId}`} 
-              name={accountId}
+              name={accountDisplayNames[accountId]}
               stackId="income" 
               fill={accountColors[accountId] || '#999999'} 
             />

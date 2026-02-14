@@ -41,20 +41,28 @@ export abstract class BaseAccount {
   public readonly accountType: AccountType;
 
   /**
+   * Optional human-readable nickname for display.
+   */
+  public readonly nickname?: string;
+
+  /**
    * Create a new account.
    * 
    * @param id - Unique identifier for this account
    * @param initialBalance - Starting balance
    * @param accountType - Account type classification
+   * @param nickname - Optional display name
    */
   constructor(
     id: string,
     initialBalance: Big | number | string,
     accountType: AccountType,
+    nickname?: string,
   ) {
     this.id = id;
     this.balance = toBig(initialBalance);
     this.accountType = accountType;
+    this.nickname = nickname;
   }
 
   /**

@@ -136,6 +136,15 @@ export interface WithdrawalPolicy {
 }
 
 /**
+ * Account metadata for display/visualization.
+ */
+export interface AccountMetadata {
+  id: string;
+  nickname?: string;
+  accountType: AccountType;
+}
+
+/**
  * Planned withdrawals for a single year.
  */
 export interface WithdrawalPlan {
@@ -149,6 +158,7 @@ export interface WithdrawalPlan {
   totalNetIncome: Big;
   accountBalances: Record<string, Big>; // account_id -> balance
   totalPortfolioValue: Big;
+  accountMetadata: Record<string, AccountMetadata>; // account_id -> metadata
 }
 
 /**

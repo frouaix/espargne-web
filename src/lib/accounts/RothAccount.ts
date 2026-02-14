@@ -52,6 +52,7 @@ export class RothAccount extends BaseAccount {
    * 
    * @param id - Unique account identifier
    * @param initialBalance - Starting balance
+   * @param nickname - Optional display name
    * 
    * @example
    * new RothAccount('roth-1', 500000);
@@ -60,8 +61,9 @@ export class RothAccount extends BaseAccount {
   constructor(
     id: string,
     initialBalance: Big | number | string,
+    nickname?: string,
   ) {
-    super(id, initialBalance, AccountType.ROTH);
+    super(id, initialBalance, AccountType.ROTH, nickname);
   }
 
   /**

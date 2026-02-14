@@ -84,10 +84,7 @@ export function buildChartData(result: ProjectionResult): ChartDataset {
 /**
  * Aggregate account withdrawals by type.
  * 
- * Infers account type from account ID naming conventions:
- * - "taxable" or "brokerage" → Taxable
- * - "trad", "401k", "ira" (not "roth") → Traditional
- * - "roth" → Roth
+ * Uses accountMetadata to determine types instead of inferring from ID strings.
  * 
  * @param plan - Withdrawal plan for a single year
  * @returns Aggregated withdrawals by account type
@@ -102,17 +99,30 @@ function aggregateWithdrawalsByType(plan: WithdrawalPlan): {
   let rothWithdrawal = new Big(0);
 
   for (const [accountId, amount] of Object.entries(plan.accountWithdrawals)) {
-    const idLower = accountId.toLowerCase();
+    const metadata = plan.accountMetadata[accountId];
+    if (!metadata) {
+      // Fallback to old string inference if metadata missing
+      const idLower = accountId.toLowerCase();
+      if (idLower.includes('taxable') || idLower.includes('brokerage')) {
+        taxableWithdrawal = taxableWithdrawal.plus(amount);
+      } else if (idLower.includes('roth')) {
+        rothWithdrawal = rothWithdrawal.plus(amount);
+      } else {
+        traditionalWithdrawal = traditionalWithdrawal.plus(amount);
+      }
+      continue;
+    }
     
-    if (idLower.includes('taxable') || idLower.includes('brokerage')) {
-      taxableWithdrawal = taxableWithdrawal.plus(amount);
-    } else if (idLower.includes('roth')) {
-      rothWithdrawal = rothWithdrawal.plus(amount);
-    } else if (idLower.includes('trad') || idLower.includes('401k') || idLower.includes('ira')) {
-      traditionalWithdrawal = traditionalWithdrawal.plus(amount);
-    } else {
-      // Default unknown types to traditional
-      traditionalWithdrawal = traditionalWithdrawal.plus(amount);
+    switch (metadata.accountType) {
+      case 'taxable':
+        taxableWithdrawal = taxableWithdrawal.plus(amount);
+        break;
+      case 'roth':
+        rothWithdrawal = rothWithdrawal.plus(amount);
+        break;
+      case 'traditional':
+        traditionalWithdrawal = traditionalWithdrawal.plus(amount);
+        break;
     }
   }
 
@@ -122,7 +132,7 @@ function aggregateWithdrawalsByType(plan: WithdrawalPlan): {
 /**
  * Aggregate account balances by type.
  * 
- * Uses same account type inference logic as withdrawal aggregation.
+ * Uses accountMetadata to determine types instead of inferring from ID strings.
  * 
  * @param plan - Withdrawal plan for a single year
  * @returns Aggregated balances by account type
@@ -137,17 +147,30 @@ function aggregateBalancesByType(plan: WithdrawalPlan): {
   let rothBalance = new Big(0);
 
   for (const [accountId, balance] of Object.entries(plan.accountBalances)) {
-    const idLower = accountId.toLowerCase();
+    const metadata = plan.accountMetadata[accountId];
+    if (!metadata) {
+      // Fallback to old string inference if metadata missing
+      const idLower = accountId.toLowerCase();
+      if (idLower.includes('taxable') || idLower.includes('brokerage')) {
+        taxableBalance = taxableBalance.plus(balance);
+      } else if (idLower.includes('roth')) {
+        rothBalance = rothBalance.plus(balance);
+      } else {
+        traditionalBalance = traditionalBalance.plus(balance);
+      }
+      continue;
+    }
     
-    if (idLower.includes('taxable') || idLower.includes('brokerage')) {
-      taxableBalance = taxableBalance.plus(balance);
-    } else if (idLower.includes('roth')) {
-      rothBalance = rothBalance.plus(balance);
-    } else if (idLower.includes('trad') || idLower.includes('401k') || idLower.includes('ira')) {
-      traditionalBalance = traditionalBalance.plus(balance);
-    } else {
-      // Default unknown types to traditional
-      traditionalBalance = traditionalBalance.plus(balance);
+    switch (metadata.accountType) {
+      case 'taxable':
+        taxableBalance = taxableBalance.plus(balance);
+        break;
+      case 'roth':
+        rothBalance = rothBalance.plus(balance);
+        break;
+      case 'traditional':
+        traditionalBalance = traditionalBalance.plus(balance);
+        break;
     }
   }
 

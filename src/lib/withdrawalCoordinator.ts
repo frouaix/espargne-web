@@ -33,6 +33,7 @@ import type {
   SSAIncome,
   TaxInputs,
 } from './types';
+import type { AccountMetadata } from './types';
 import { SequencingStrategy, AccountType } from './types';
 import { BaseAccount } from './accounts/BaseAccount';
 import { TaxableAccount } from './accounts/TaxableAccount';
@@ -267,7 +268,17 @@ export class WithdrawalCoordinator {
     );
     const estimatedTaxes = this.estimateTaxes(guaranteedIncome, allWithdrawals);
 
-    // Step 8: Create plan
+    // Step 8: Build account metadata for visualization
+    const accountMetadata: Record<string, AccountMetadata> = {};
+    for (const [_id, account] of this.accounts) {
+      accountMetadata[account.id] = {
+        id: account.id,
+        nickname: account.nickname,
+        accountType: account.accountType,
+      };
+    }
+
+    // Step 9: Create plan
     const plan: WithdrawalPlan = {
       year,
       age,
@@ -279,6 +290,7 @@ export class WithdrawalCoordinator {
       totalNetIncome: subtract(totalGrossIncome, estimatedTaxes),
       accountBalances: this.getAccountBalances(),
       totalPortfolioValue: this.getPortfolioValue(),
+      accountMetadata,
     };
 
     this.withdrawalHistory.push(plan);
