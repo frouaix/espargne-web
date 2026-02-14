@@ -109,7 +109,6 @@ describe('validation', () => {
         accountType: 'traditional',
         balance: 500000,
         nickname: 'My 401k',
-        birthYear: 1960,
       };
       
       expect(validateAccount(account)).toBe(true);
@@ -122,6 +121,7 @@ describe('validation', () => {
         balance: 200000,
         costBasis: 150000,
         nickname: 'Brokerage',
+        dividendYield: 0.02,
       };
       
       expect(validateAccount(account)).toBe(true);
@@ -155,11 +155,13 @@ describe('validation', () => {
     });
 
     it('should return false when balance is not a number', () => {
+      // Using Partial to test invalid data
       const account = {
         accountId: 'roth-1',
         accountType: 'roth',
-        balance: 'invalid' as any,
-      };
+        nickname: 'Test',
+        balance: 'invalid' as unknown as number,
+      } as Account;
       
       expect(validateAccount(account)).toBe(false);
     });
@@ -168,6 +170,7 @@ describe('validation', () => {
       const account: Account = {
         accountId: 'roth-1',
         accountType: 'roth',
+        nickname: 'Test',
         balance: 0,
       };
       
@@ -178,6 +181,7 @@ describe('validation', () => {
       const account: Account = {
         accountId: 'roth-1',
         accountType: 'roth',
+        nickname: 'Test',
         balance: -100,
       };
       
@@ -188,6 +192,7 @@ describe('validation', () => {
       const account: Account = {
         accountId: '',
         accountType: 'roth',
+        nickname: 'Test',
         balance: 100000,
       };
       
@@ -195,11 +200,13 @@ describe('validation', () => {
     });
 
     it('should return false when accountType is empty string', () => {
-      const account: Account = {
+      // Using invalid type cast to test validation
+      const account = {
         accountId: 'roth-1',
-        accountType: '' as any,
+        accountType: '',
+        nickname: 'Test',
         balance: 100000,
-      };
+      } as unknown as Account;
       
       expect(validateAccount(account)).toBe(false);
     });
@@ -210,7 +217,6 @@ describe('validation', () => {
         accountType: 'traditional',
         balance: 500000,
         nickname: 'My IRA',
-        birthYear: 1960,
       };
       
       expect(validateAccount(account)).toBe(true);

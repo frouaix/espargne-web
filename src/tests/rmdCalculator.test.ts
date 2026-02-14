@@ -330,7 +330,7 @@ describe('RMD Calculator', () => {
       const rmd76 = calculateRMD(balance, 76);
       balance = balance.minus(rmd76);
       
-      const rmd77 = calculateRMD(balance, 77);
+      calculateRMD(balance, 77); // Year 77 RMD calculated
       
       // Balance should decrease each year
       expect(balance.lt(toBig(100000))).toBe(true);
