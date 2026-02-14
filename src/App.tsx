@@ -190,8 +190,8 @@ function App(): ReactElement {
       localStorage.setItem(DISCLAIMER_ACCEPTED, 'true');
       setShowDisclaimer(false);
     } catch (error) {
-      // If localStorage is unavailable or quota exceeded, still close the modal
-      // The disclaimer will show again on next page load
+      // If localStorage is unavailable or quota exceeded, still close the modal.
+      // Note: Disclaimer will reappear on next page load since localStorage write failed.
       setShowDisclaimer(false);
     }
   };
