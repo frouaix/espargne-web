@@ -265,3 +265,37 @@ Vite 7.3.1 requires Node.js 20.19+ or 22.12+. Check with:
 ```bash
 node --version
 ```
+
+## Temporary Files & Logs
+
+### Workspace for Temporary Files
+**Always use `/tmp/espargne-web` for all temporary files, logs, and test artifacts.**
+
+```bash
+# Create the directory if needed
+mkdir -p /tmp/espargne-web
+
+# Allowed operations in /tmp/espargne-web:
+# - Create/write temporary files
+# - Write logs, test output, debug data
+# - Create test artifacts
+# - Delete files when done
+
+# Examples:
+pnpm dev > /tmp/espargne-web/dev-server.log 2>&1 &
+node /tmp/espargne-web/test-script.js
+cat > /tmp/espargne-web/debug-output.txt
+```
+
+### Rules:
+✅ **DO** create temporary files in `/tmp/espargne-web`  
+✅ **DO** delete temporary files when finished with task  
+❌ **DO NOT** create temporary files in project repository  
+❌ **DO NOT** commit temporary files to git  
+
+### Typical Use Cases:
+- Dev server logs (avoid cluttering terminal output)
+- Test scripts for quick validation
+- Debug output files
+- Temporary data transformations
+- Performance profiling data
