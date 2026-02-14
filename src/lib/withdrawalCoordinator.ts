@@ -287,7 +287,7 @@ export class WithdrawalCoordinator {
 
     // Step 8: Build account metadata for visualization
     const accountMetadata: Record<string, AccountMetadata> = {};
-    for (const [_id, account] of this.accounts) {
+    for (const [, account] of this.accounts) {
       accountMetadata[account.id] = {
         id: account.id,
         nickname: account.nickname,

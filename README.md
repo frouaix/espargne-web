@@ -78,6 +78,16 @@ pnpm preview
 
 The development server will start on `http://localhost:5174` by default.
 
+### Branch Protection
+
+The `main` branch is protected with the following rules:
+- ✅ **Required CI/CD checks**: Deployment workflow must pass before merge
+- 🚫 **Force pushes blocked**: Git history is protected
+- 🚫 **Branch deletion blocked**: Main branch cannot be deleted
+- 👤 **Admin bypass available**: Owner can override in emergencies
+
+This ensures code quality while maintaining development velocity for solo maintenance.
+
 ## Project Structure
 
 ```
