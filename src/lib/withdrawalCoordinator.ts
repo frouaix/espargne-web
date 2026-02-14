@@ -44,11 +44,14 @@ import { FederalTaxCalculator } from './taxCalculator';
  * Social Security benefit calculator.
  *
  * Calculates annual benefits based on claiming age with adjustments
- * for early or delayed claiming relative to Full Retirement Age.
+ * for early or delayed claiming relative to Full Retirement Age,
+ * plus COLA (Cost of Living Adjustment) increases.
  */
 export class SSABenefitCalculator {
   private readonly fraMonthlyBenefit: Big;
   private readonly claimingAge: number;
+  private readonly colaRate: Big;
+  private baseBenefit: Big | null = null; // Benefit at claiming age (before COLA)
 
   // FRA is 67 for people born 1960+
   private static readonly FRA = 67;
@@ -57,27 +60,42 @@ export class SSABenefitCalculator {
   private static readonly EARLY_REDUCTION_MONTHLY = new Big('0.00555556'); // ~5/9 of 1%
   private static readonly DELAYED_CREDIT_MONTHLY = new Big('0.00666667'); // 2/3 of 1% (~8% annually)
 
-  constructor(ssaIncome: SSAIncome) {
+  constructor(ssaIncome: SSAIncome, colaRate: Big) {
     this.fraMonthlyBenefit = toBig(ssaIncome.fraMonthlyBenefit);
     this.claimingAge = ssaIncome.claimingAge;
+    this.colaRate = colaRate;
   }
 
   /**
-   * Calculate annual benefit for given age.
+   * Calculate annual benefit for given age with COLA adjustments.
    *
    * Returns 0 if age is below claiming age.
+   * Applies COLA increases for each year after claiming.
    *
    * @param age - Current age
-   * @returns Annual benefit amount
+   * @returns Annual benefit amount with COLA applied
    */
   getBenefitAtAge(age: number): Big {
     if (age < this.claimingAge) {
       return new Big(0);
     }
 
-    const adjustmentFactor = this.calculateAdjustmentFactor();
-    const monthlyBenefit = this.fraMonthlyBenefit.times(adjustmentFactor);
-    return monthlyBenefit.times(12);
+    // Calculate base benefit at claiming age (once)
+    if (this.baseBenefit === null) {
+      const adjustmentFactor = this.calculateAdjustmentFactor();
+      const monthlyBenefit = this.fraMonthlyBenefit.times(adjustmentFactor);
+      this.baseBenefit = monthlyBenefit.times(12);
+    }
+
+    // Apply COLA for years since claiming
+    const yearsSinceClaiming = age - this.claimingAge;
+    if (yearsSinceClaiming === 0) {
+      return this.baseBenefit;
+    }
+
+    // Compound COLA: benefit * (1 + colaRate)^years
+    const colaFactor = add(new Big(1), this.colaRate).pow(yearsSinceClaiming);
+    return this.baseBenefit.times(colaFactor);
   }
 
   /**
@@ -175,7 +193,7 @@ export class WithdrawalCoordinator {
     this.accounts = new Map(config.accounts.map((acc) => [acc.id, acc]));
     this.policy = config.policy;
     this.ssaCalculator = config.ssaIncome
-      ? new SSABenefitCalculator(config.ssaIncome)
+      ? new SSABenefitCalculator(config.ssaIncome, config.policy.inflationRate)
       : null;
     this.userProfile = config.userProfile;
     this.currentYear = config.startingYear;
@@ -234,7 +252,7 @@ export class WithdrawalCoordinator {
 
     // Update SSA calculator if provided
     if (ssaIncome) {
-      this.ssaCalculator = new SSABenefitCalculator(ssaIncome);
+      this.ssaCalculator = new SSABenefitCalculator(ssaIncome, this.policy.inflationRate);
     }
 
     // Step 1: Calculate guaranteed income (SSA)
