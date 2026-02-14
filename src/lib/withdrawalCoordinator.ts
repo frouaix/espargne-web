@@ -4,8 +4,6 @@
  * Orchestrates withdrawals from multiple account types and income sources
  * to meet retirement income targets while optimizing tax efficiency.
  *
- * Port of Python WithdrawalCoordinator from espargne-core/models/strategies/withdrawal_coordinator.py
- *
  * Key features:
  * - Multiple withdrawal sequencing strategies
  * - RMD enforcement for Traditional accounts

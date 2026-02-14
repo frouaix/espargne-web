@@ -3,8 +3,6 @@
  * 
  * Implements IRS RMD (Required Minimum Distribution) rules.
  * Withdrawals are ordinary income, fully taxable.
- * 
- * Port of Python SimpleTaxDeferredAccount from models/strategies/withdrawal_coordinator.py
  */
 
 import Big from 'big.js';

@@ -5,8 +5,6 @@
  * and quantify uncertainty. Uses normal distribution (Box-Muller transform) to
  * generate stochastic returns for each year of each simulation.
  *
- * Port of Python MonteCarloEngine from espargne-core/simulations/projection_engine.py
- *
  * Key features:
  * - Multiple simulation runs (typically 1000) with stochastic returns
  * - Normal distribution return generation using Box-Muller transform
