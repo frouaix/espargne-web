@@ -1,0 +1,45 @@
+name: Reusable Test and Build
+
+on:
+  workflow_call:
+
+jobs:
+  test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'pnpm'
+      
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: Run tests
+        run: pnpm test run
+      
+      - name: Build
+        run: pnpm build
+      
+      - name: Generate coverage report
+        run: pnpm test:coverage
+      
+      - name: Upload coverage to GitHub
+        if: hashFiles('coverage/coverage-final.json') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          if-no-files-found: warn
+          retention-days: 7
