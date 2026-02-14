@@ -93,7 +93,7 @@ describe('bigHelpers', () => {
       const a = toBig(100);
       const b = toBig(3);
       const result = divide(a, b);
-      // Big.js default precision
+      // Uses configured Big.js precision (Big.DP = 10 in bigHelpers)
       expect(result.toString()).toContain('33.333333');
     });
   });
