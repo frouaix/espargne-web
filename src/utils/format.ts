@@ -10,3 +10,15 @@ export function formatCurrency(amount: number): string {
     maximumFractionDigits: 0
   });
 }
+
+/**
+ * Format a number as US currency with cents (no dollar sign included)
+ * @param amount - The amount to format
+ * @returns Formatted string like "1,234,567.89" (use with $ in template: ${formatCurrencyWithCents(amount)})
+ */
+export function formatCurrencyWithCents(amount: number): string {
+  return amount.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}

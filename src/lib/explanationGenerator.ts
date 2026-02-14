@@ -12,6 +12,7 @@
 
 import type { ProjectionResult, ChartDataPoint } from './types';
 import { buildChartData } from './chartDataBuilder';
+import { formatCurrencyWithCents } from '../utils/format';
 
 /**
  * Structured explanation of retirement scenario.
@@ -123,7 +124,7 @@ function generateSummary(
   if (failureYear !== undefined && failureAge !== undefined) {
     return (
       `Scenario '${scenarioName}' projects portfolio depletion in year ${failureYear} ` +
-      `at age ${failureAge}. The portfolio started at $${initialPortfolio.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} and ` +
+      `at age ${failureAge}. The portfolio started at $${formatCurrencyWithCents(initialPortfolio)} and ` +
       `lasted ${totalYears} years before running out of funds. This indicates the ` +
       `withdrawal strategy is not sustainable for the full retirement period.`
     );
@@ -134,8 +135,8 @@ function generateSummary(
     
     return (
       `Scenario '${scenarioName}' successfully maintains the portfolio for all ${totalYears} ` +
-      `years simulated. Starting with $${initialPortfolio.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}, the portfolio ${changeDesc} ` +
-      `to $${finalPortfolio.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (a ${Math.abs(portfolioChangePct).toFixed(2)}% ` +
+      `years simulated. Starting with $${formatCurrencyWithCents(initialPortfolio)}, the portfolio ${changeDesc} ` +
+      `to $${formatCurrencyWithCents(finalPortfolio)} (a ${Math.abs(portfolioChangePct).toFixed(2)}% ` +
       `${changeType}). This demonstrates a ${sustainabilityDesc} withdrawal strategy.`
     );
   }
@@ -185,12 +186,12 @@ function analyzeSuccess(
     return (
       `✅ PORTFOLIO SUCCESS\n\n` +
       `The portfolio successfully sustains withdrawals for the entire ${dataPoints.length}-year period. ` +
-      `Ending balance of $${finalPortfolio.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} represents ` +
+      `Ending balance of $${formatCurrencyWithCents(finalPortfolio)} represents ` +
       `${finalPct.toFixed(2)}% of the starting value.\n\n` +
       `Sustainability Metrics:\n` +
       `  • Effective withdrawal rate: ${effectiveWithdrawalRate.toFixed(2)}% of initial portfolio\n` +
       `  • Portfolio trajectory: ${sustainabilityScore}\n` +
-      `  • Final portfolio value: $${finalPortfolio.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}\n` +
+      `  • Final portfolio value: $${formatCurrencyWithCents(finalPortfolio)}\n` +
       `  • Safety margin: ${safetyMargin}`
     );
   }
@@ -235,12 +236,12 @@ function analyzeTaxes(
   return (
     `Tax Efficiency Rating: ${efficiencyRating}\n\n` +
     `Overall Tax Metrics:\n` +
-    `  • Total taxes paid: $${totalTaxes.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} over ${dataPoints.length} years\n` +
-    `  • Average annual tax: $${avgAnnualTax.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}\n` +
+    `  • Total taxes paid: $${formatCurrencyWithCents(totalTaxes)} over ${dataPoints.length} years\n` +
+    `  • Average annual tax: $${formatCurrencyWithCents(avgAnnualTax)}\n` +
     `  • Effective tax rate: ${effectiveTaxRate.toFixed(2)}% of gross withdrawals\n\n` +
     `Tax Variation:\n` +
-    `  • Lowest tax year: Year ${minTaxYear.year} (age ${minTaxYear.age}) - $${Math.abs(minTaxYear.taxes).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}\n` +
-    `  • Highest tax year: Year ${maxTaxYear.year} (age ${maxTaxYear.age}) - $${Math.abs(maxTaxYear.taxes).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}\n\n` +
+    `  • Lowest tax year: Year ${minTaxYear.year} (age ${minTaxYear.age}) - $${formatCurrencyWithCents(Math.abs(minTaxYear.taxes))}\n` +
+    `  • Highest tax year: Year ${maxTaxYear.year} (age ${maxTaxYear.age}) - $${formatCurrencyWithCents(Math.abs(maxTaxYear.taxes))}\n\n` +
     `Withdrawal Sources:\n` +
     `  • Traditional account withdrawals: ${tradWithdrawalYears} years\n` +
     `  • Taxable account withdrawals: ${taxableWithdrawalYears} years\n` +
@@ -280,12 +281,12 @@ function analyzeWithdrawals(dataPoints: ChartDataPoint[], totalWithdrawals: numb
   
   return (
     `Withdrawal Strategy: ${strategy}\n\n` +
-    `Total Withdrawals: $${totalWithdrawals.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}\n` +
-    `Average Annual: $${avgWithdrawal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}\n\n` +
+    `Total Withdrawals: $${formatCurrencyWithCents(totalWithdrawals)}\n` +
+    `Average Annual: $${formatCurrencyWithCents(avgWithdrawal)}\n\n` +
     `Source Breakdown:\n` +
-    `  • Taxable accounts: $${totalTaxable.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (${pctTaxable.toFixed(2)}%)\n` +
-    `  • Traditional accounts: $${totalTraditional.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (${pctTraditional.toFixed(2)}%)\n` +
-    `  • Roth accounts: $${totalRoth.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (${pctRoth.toFixed(2)}%)\n\n` +
+    `  • Taxable accounts: $${formatCurrencyWithCents(totalTaxable)} (${pctTaxable.toFixed(2)}%)\n` +
+    `  • Traditional accounts: $${formatCurrencyWithCents(totalTraditional)} (${pctTraditional.toFixed(2)}%)\n` +
+    `  • Roth accounts: $${formatCurrencyWithCents(totalRoth)} (${pctRoth.toFixed(2)}%)\n\n` +
     `The ${strategy.toLowerCase()} approach ${strategyDesc} during retirement.`
   );
 }
@@ -302,13 +303,13 @@ function identifyMilestones(dataPoints: ChartDataPoint[]): string[] {
   
   if (maxPortfolio.year !== dataPoints[0].year) {
     milestones.push(
-      `Portfolio peak: $${maxPortfolio.totalPortfolio.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} in year ${maxPortfolio.year} (age ${maxPortfolio.age})`,
+      `Portfolio peak: $${formatCurrencyWithCents(maxPortfolio.totalPortfolio)} in year ${maxPortfolio.year} (age ${maxPortfolio.age})`,
     );
   }
   
   if (minPortfolio.totalPortfolio < dataPoints[0].totalPortfolio * 0.8) {
     milestones.push(
-      `Portfolio low point: $${minPortfolio.totalPortfolio.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} in year ${minPortfolio.year} (age ${minPortfolio.age})`,
+      `Portfolio low point: $${formatCurrencyWithCents(minPortfolio.totalPortfolio)} in year ${minPortfolio.year} (age ${minPortfolio.age})`,
     );
   }
   
@@ -333,7 +334,7 @@ function identifyMilestones(dataPoints: ChartDataPoint[]): string[] {
     const firstSsa = ssaYears[0];
     milestones.push(
       `Social Security begins: Age ${firstSsa.age} (year ${firstSsa.year}) - ` +
-      `$${firstSsa.socialSecurity.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/year`,
+      `$${formatCurrencyWithCents(firstSsa.socialSecurity)}/year`,
     );
   }
   
