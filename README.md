@@ -2,6 +2,20 @@
 
 A pure TypeScript SPA for US retirement planning with comprehensive financial simulations. All calculations run in the browser with no backend required.
 
+## ⚠️ DISCLAIMER
+
+**THIS SOFTWARE IS PROVIDED FOR EDUCATIONAL AND INFORMATIONAL PURPOSES ONLY.**
+
+- **NOT FINANCIAL ADVICE**: This application does NOT provide financial, investment, tax, or legal advice.
+- **NO WARRANTIES**: The software is provided "AS IS" without any warranties or guarantees of accuracy.
+- **USE AT YOUR OWN RISK**: Any decisions you make based on this tool are entirely your own responsibility.
+- **CONSULT PROFESSIONALS**: Always consult with qualified financial advisors, tax professionals, and legal counsel before making retirement planning decisions.
+- **NO LIABILITY**: The authors and contributors accept NO LIABILITY for any financial losses, damages, or consequences arising from the use of this software.
+
+Tax laws, retirement regulations, and financial markets are complex and constantly changing. This tool uses simplified models that may not accurately represent your specific situation.
+
+---
+
 ## Features
 
 ### Portfolio Management
@@ -166,6 +180,37 @@ This project follows strict conventions defined in `.github/instructions/CodingC
 - Destructuring preferred over direct property access
 - No inline CSS styles
 - No console.log in production code
+
+## Important Disclaimers & Limitations
+
+### Not Financial Advice
+This application is a **planning tool only** and does not constitute professional financial, investment, tax, or legal advice. The calculations and projections are simplified models that cannot account for the full complexity of:
+- Individual financial circumstances
+- Tax law nuances and state-specific regulations
+- Market volatility and economic conditions
+- Changes in legislation (e.g., tax brackets, RMD ages, Social Security rules)
+- Personal risk tolerance and goals
+
+### Known Limitations
+- **Federal taxes only** - State and local taxes not modeled
+- **Simplified tax calculations** - Does not model all deductions, credits, or phase-outs
+- **No early withdrawal penalties** - Assumes withdrawals after age 59.5
+- **IRMAA not fully implemented** - Medicare surcharge avoidance strategy incomplete
+- **Fixed assumptions** - Uses simplified models for inflation, returns, and expenses
+- **No estate planning** - Does not model inheritance, trusts, or estate taxes
+- **Social Security estimates** - Based on user input, not actual SSA records
+
+### Your Responsibility
+- **Verify all inputs** - Garbage in, garbage out
+- **Review outputs carefully** - Check calculations against other tools
+- **Consult professionals** - CPA, CFP®, or financial advisor before making decisions
+- **Update regularly** - Tax laws and regulations change frequently
+- **Understand limitations** - This is not a substitute for professional advice
+
+### No Warranties
+This software is provided "AS IS" under the MIT License, WITHOUT WARRANTY OF ANY KIND, express or implied. The authors accept NO LIABILITY for financial losses, missed opportunities, or other damages resulting from use of this software.
+
+**By using this application, you acknowledge that you understand these limitations and accept full responsibility for your financial decisions.**
 
 ## License
 
